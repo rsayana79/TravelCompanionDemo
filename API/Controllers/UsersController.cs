@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using API.Data;
 using Microsoft.EntityFrameworkCore;
 using API.Entities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -20,13 +21,15 @@ namespace API.Controllers
             _context = context;
         }
 
+        [Authorize]
         [HttpGet(Name = "GetUsers")]
         public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers()
         {
             return await _context.Users.ToListAsync();
              
         }
-
+        
+        [Authorize]
         [HttpGet("{id}", Name = "GetUser")]
         public async Task<ActionResult<AppUser>> GetCountry(int id)
         {

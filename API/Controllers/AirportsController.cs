@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using API.Entites;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +20,7 @@ namespace API.Controllers
             _context = context;
         }
 
+        [Authorize]
         [HttpGet(Name = "GetAirports")]
         public async Task<ActionResult<IEnumerable<AirportsList>>> GetAirports()
         {
@@ -26,6 +28,7 @@ namespace API.Controllers
              
         }
 
+        [Authorize]
         [HttpGet("{id}", Name = "GetAirport")]
         public async Task<ActionResult<AirportsList>> GetAirport(int id)
         {

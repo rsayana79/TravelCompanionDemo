@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using API.Entites;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -20,6 +21,7 @@ namespace API.Controllers
             _context = context;
         }
 
+        [Authorize]
         [HttpGet(Name = "GetCountries")]
         public async Task<ActionResult<IEnumerable<Country>>> GetCountries()
         {
@@ -27,6 +29,7 @@ namespace API.Controllers
              
         }
 
+        [Authorize]
         [HttpGet("{id}", Name = "GetCountry")]
         public async Task<ActionResult<Country>> GetCountry(int id)
         {
