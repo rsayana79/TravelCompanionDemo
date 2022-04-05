@@ -1,0 +1,56 @@
+
+    <form *ngIf="((this.accountService.currentUser$ | async) === null) && !this.registerMode" #loginForm="ngForm"  autocomplete="0ff">        
+        <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+
+        <div class="form-floating">
+            <input name="loginId" [(ngModel)]="model.loginId" type="email" class="form-control" id="Input" placeholder="name@example.com">
+            <label for="Input">Email address</label>
+            <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+        </div>
+        <div class="form-floating">
+            <input name="password" [(ngModel)]="model.password" type="password" class="form-control" id="Password" placeholder="Password">
+            <label for="Password">Password</label>
+            <div id="passwordHelpBlock" class="form-text">
+                Please enter a strong password
+            </div>
+        </div>
+
+        <div class="checkbox mb-3">
+            <label>
+                <input type="checkbox" value="remember-me"> Remember me
+            </label>
+        </div>
+        <div class="d-flex flex-row justify-content-evenly">
+            <div><button class="w-100 btn btn-lg btn-primary" type="submit" (click)="login()">Sign in</button></div>
+            <div><button class="w-100 btn btn-lg btn-primary" type="submit" (click)="toggleRegisterMode()">Register</button></div>                        
+        </div>
+    </form>
+
+
+    <form *ngIf="((this.accountService.currentUser$ | async) === null) && this.registerMode" #loginForm="ngForm"  autocomplete="0ff">        
+        <h1 class="h3 mb-3 fw-normal">Please regsiter here</h1>
+
+        <div class="form-floating">
+            <input name="userName" [(ngModel)]="model.userName" type="email" class="form-control" id="Input" placeholder="name@example.com">
+            <label for="Input">User Name</label>
+        </div>
+        <br>
+        <div class="form-floating">
+            <input name="emailId" [(ngModel)]="model.emailId" type="email" class="form-control" id="Input" placeholder="name@example.com">
+            <label for="Input">Email address</label>
+            <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+        </div>
+        <div class="form-floating">
+            <input name="password" [(ngModel)]="model.password" type="password" class="form-control" id="Password" placeholder="Password">
+            <label for="Password">Password</label>
+            <div id="passwordHelpBlock" class="form-text">
+                Please enter a strong password
+            </div>
+        </div>
+        <br>
+        <div class="d-flex flex-row justify-content-evenly">
+            <div><button class="w-100 btn btn-lg btn-primary" type="button" (click)="toggleRegisterMode()">Back to Login</button></div>
+            <div><button class="w-100 btn btn-lg btn-primary" type="submit" (click)="registerUser()">Register</button></div>                        
+        </div>
+    </form>
+

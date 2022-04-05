@@ -1,5 +1,13 @@
-<h1>{{title}}</h1>
+<div>
+  <div class="d-flex">
+    <app-nav></app-nav>
+  </div>
+  <div class="d-flex justify-content-center align-items-center">
+    <app-login></app-login>
+  </div>
+</div>
+
 
 <ul>
-  <li *ngFor='let country of countries'>{{country.id}}  --  {{country.country1}}</li>
+  <li *ngFor='let country of countries'>{{country.id}} -- {{country.country1}}</li>
 </ul>
