@@ -1,7 +1,9 @@
+import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AccountService } from './../_services/account.service';
 import { Component, OnInit } from '@angular/core';
 import { User } from '../_models/user';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login',
@@ -11,7 +13,7 @@ import { User } from '../_models/user';
 export class LoginComponent implements OnInit {
   model: any={  };
   registerMode = false;
-  constructor(public accountService: AccountService) { }
+  constructor(public accountService: AccountService, private router : Router, private toastr: ToastrService) { }
 
   ngOnInit(): void {
   }
@@ -19,10 +21,15 @@ export class LoginComponent implements OnInit {
   login(){
     console.log(this.model);
     this.accountService.login(this.model).subscribe(response =>{
+      this.router.navigateByUrl('/viewbookings')
       console.log(response);
       this.accountService.loggedIn = true;
     },
-    error => { console.log(error)}
+    error => { 
+      console.log(error);
+      this.toastr.error(error.error);
+      
+    }
     )
   }
 
@@ -35,7 +42,10 @@ export class LoginComponent implements OnInit {
     this.accountService.register(this.model).subscribe(response =>{
       console.log(response);
     },
-    error=>{console.log(error)})
+    error=>{
+      console.log(error);
+      this.toastr.error(error.error);
+    })
   }
 
 
