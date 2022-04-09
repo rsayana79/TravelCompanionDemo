@@ -9,6 +9,7 @@ import { BookingsDataComponent } from './bookings-data/bookings-data.component';
 import { LoginComponent } from './login/login.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { DatePickerComponent } from './date-picker/date-picker.component';
 
 const routes: Routes = [
   {path: '', component: LoginComponent},
@@ -22,7 +23,8 @@ const routes: Routes = [
       {path: 'country', component: CountriesListComponent},
       {path: 'airports', component: AiportsListComponent},
       {path: 'notifications', component: NotificationsComponent},
-      {path: 'traveldate', component: DateslectorComponent}
+      {path: 'traveldate', component: DateslectorComponent},
+      {path: 'dateselector', component: DatePickerComponent}
     ]
   },
   {path: '**', component: ErrorComponent, pathMatch:'full'}
