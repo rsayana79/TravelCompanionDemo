@@ -1,4 +1,24 @@
 <div class="d-flex flex-row align-items-left">
     <div class="p-2"><app-date-picker></app-date-picker></div>
-    <div class=" p-2 flex-grow-1">hi there</div> 
+    <div class=" p-2 flex-grow-1">
+<!--         <ul *ngFor="let country of countries">
+            <li>{{country.country1}}</li>
+        </ul> -->
+        <form class="example-form">
+            <mat-form-field class="example-full-width" appearance="fill">
+              <mat-label>Select Country</mat-label>
+              <input type="text"
+                     placeholder="Start typing to filter"
+                     aria-label="Select Country"
+                     matInput
+                     [formControl]="myControl"
+                     [matAutocomplete]="auto">
+              <mat-autocomplete #auto="matAutocomplete">
+                <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+                  {{option}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </form>
+    </div> 
 </div>

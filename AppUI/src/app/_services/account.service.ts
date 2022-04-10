@@ -1,5 +1,5 @@
 import { User } from './../_models/user';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {map} from 'rxjs/operators';
 import { ReplaySubject } from 'rxjs';
@@ -10,6 +10,7 @@ import { ReplaySubject } from 'rxjs';
 export class AccountService {
   baseUrl = "https://localhost:5001/api";
   private currentUserSource = new ReplaySubject<User>(1);
+  private token : any;
   currentUser$ = this.currentUserSource.asObservable();
   loggedIn : boolean;
   userName :string;
@@ -22,9 +23,18 @@ export class AccountService {
         if(user){
           localStorage.setItem('user', JSON.stringify(user));
           this.currentUserSource.next(user);
+          this.token = user.token;          
         }
       })
     );
+  }
+
+  getHeader(){
+    const headers =  new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${this.token}`      
+    });  
+    return headers;
   }
 
   register(model:any){
@@ -33,6 +43,7 @@ export class AccountService {
         if(user){
           localStorage.setItem('user', JSON.stringify(user));
           this.currentUserSource.next(user);
+          this.token = user.token;          
         }
         return user;
       })
@@ -40,11 +51,13 @@ export class AccountService {
   }
 
   setCurrentUser(user: User){
-    this.currentUserSource.next(user)
+    this.currentUserSource.next(user);
+    this.token = user?.token;
   }
 
   logout(){
     localStorage.removeItem('user');
     this.currentUserSource.next(null);
+    this.token = null;
   }
 }

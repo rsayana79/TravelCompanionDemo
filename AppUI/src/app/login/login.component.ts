@@ -22,8 +22,6 @@ export class LoginComponent implements OnInit {
     console.log(this.model);
     this.accountService.login(this.model).subscribe(response =>{
       this.router.navigateByUrl('/viewbookings')
-      console.log(response);
-      this.accountService.loggedIn = true;
     },
     error => { 
       console.log(error);
