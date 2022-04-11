@@ -21,19 +21,21 @@ namespace API.Controllers
         }
 
         [Authorize]
+        [Route("GetAirports/{country?}")]
         [HttpGet(Name = "GetAirports")]
-        public async Task<ActionResult<IEnumerable<AirportsList>>> GetAirports()
+        public async Task<ActionResult<IEnumerable<AirportsList>>> GetAirports(string country)
         {
-            return await _context.AirportsLists.ToListAsync();
+            return await _context.AirportsLists.Where(airport => airport.Country.StartsWith(country)).ToListAsync();
              
         }
 
         [Authorize]
-        [HttpGet("{id}", Name = "GetAirport")]
-        public async Task<ActionResult<AirportsList>> GetAirport(int id)
+        [Route("GetAirport/{country}/{airportname?}")]
+        [HttpGet(Name = "GetAirport")]
+        public async Task<ActionResult<AirportsList>> GetAirport(string airportname, string country)
         {
-            return  await _context.AirportsLists.FindAsync(id);
-            
+            return  await _context.AirportsLists.Where(airport => airport.Country == country && (airport.Airport.StartsWith(airportname) || airport.Iatacode.StartsWith(airportname)
+            || airport.Icaocode.StartsWith(airportname))).FirstOrDefaultAsync();            
         }
     }
 }
