@@ -25,6 +25,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { DateAdapter, MatNativeDateModule } from '@angular/material/core';
 import {MatInputModule} from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { InputfieldsComponent } from './inputfields/inputfields.component';
+
 
 @NgModule({
   declarations: [
@@ -38,7 +40,8 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
     NotificationsComponent,
     DateslectorComponent,
     ErrorComponent,
-    DatePickerComponent
+    DatePickerComponent,
+    InputfieldsComponent
   ],
   imports: [
     BrowserModule,

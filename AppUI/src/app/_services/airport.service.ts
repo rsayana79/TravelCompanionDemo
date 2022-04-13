@@ -7,7 +7,7 @@ import { AccountService } from './account.service';
   providedIn: 'root'
 })
 export class AirportService {
-  baseUrl = "https://localhost:5001/api/aiports";
+  baseUrl = "https://localhost:5001/api/airports";
   airports: Airport[];
 
   constructor(private http: HttpClient, private accountService: AccountService) { }
@@ -15,8 +15,7 @@ export class AirportService {
   getAirports(airportName : string) {
     this.http.get(this.baseUrl + "/getairports/"+airportName, { headers: this.accountService.getHeader() }).subscribe(
       response => {
-        if (response && this.airports === undefined) {
-          console.log(`country service get countries async ${this.airports}`);
+        if (response) {          
           this.airports = [];
           for (var i = 0; i < ((<any>response).length); i++) {
             this.airports.push(response[i]);

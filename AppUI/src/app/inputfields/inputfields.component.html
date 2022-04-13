@@ -1,0 +1,61 @@
+<div class="p-2">
+    <app-date-picker></app-date-picker>
+</div>
+<div class="p-2">
+    <form class="example-form">
+        <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Origin Country</mat-label>
+            <input type="text" placeholder="Start typing to filter" aria-label="Select Country" matInput
+                [formControl]="originCountryFormControl" [matAutocomplete]="originCountry">
+            <mat-autocomplete #originCountry="matAutocomplete">
+                <mat-option (click)="loadAirports(originCountry, 'originAirport')"
+                    *ngFor="let originCountry of originCountryFilter | async" [value]="originCountry">
+                    {{originCountry}}
+                </mat-option>
+            </mat-autocomplete>
+        </mat-form-field>
+    </form>
+</div>
+<div class="p-2">
+    <form class="example-form">
+        <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Origin Airport</mat-label>
+            <input type="text" placeholder="Start typing to filter" aria-label="Select Airport" matInput
+                [formControl]="originAirportFormControl" [matAutocomplete]="originAirport">
+            <mat-autocomplete #originAirport="matAutocomplete">
+                <mat-option *ngFor="let option of originAirportFilter | async" [value]="option">
+                    {{option}}
+                </mat-option>
+            </mat-autocomplete>
+        </mat-form-field>
+    </form>
+</div>
+<div class="p-2">
+    <form class="example-form">
+        <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Destination Country</mat-label>
+            <input type="text" placeholder="Start typing to filter" aria-label="Select Country" matInput
+                [formControl]="destinationCountryFormControl" [matAutocomplete]="destinationCountry">
+            <mat-autocomplete #destinationCountry="matAutocomplete">
+                <mat-option (click)="loadAirports(destinationCountry, 'destinationAirport')"
+                    *ngFor="let destinationCountry of destinationCountryFilter | async" [value]="destinationCountry">
+                    {{destinationCountry}}
+                </mat-option>
+            </mat-autocomplete>
+        </mat-form-field>
+    </form>
+</div>
+<div class="p-2">
+    <form class="example-form">
+        <mat-form-field class="example-full-width" appearance="fill">
+            <mat-label>Destination Airport</mat-label>
+            <input type="text" placeholder="Start typing to filter" aria-label="Select Airport" matInput
+                [formControl]="destinationAirportFormControl" [matAutocomplete]="destinationAirport">
+            <mat-autocomplete #destinationAirport="matAutocomplete">
+                <mat-option *ngFor="let option of destinationAirportFilter | async" [value]="option">
+                    {{option}}
+                </mat-option>
+            </mat-autocomplete>
+        </mat-form-field>
+    </form>
+</div>

@@ -23,16 +23,5 @@ export class AppComponent implements OnInit {
     this.accountService.setCurrentUser(user);
   }
 
-  getCountries(){
-    this.http.get("https://localhost:5001/api/countries").subscribe(
-      response => {
-        this.countries = response;
-      },
-      error => {
-        console.log(error);
-        
-      }
-    )
-  }
 
 }
