@@ -20,13 +20,14 @@ namespace API.Entites
         public virtual DbSet<AirportsListTest> AirportsListTests { get; set; }
         public virtual DbSet<CountriesTest> CountriesTests { get; set; }
         public virtual DbSet<Country> Countries { get; set; }
+        public virtual DbSet<Posting> Postings { get; set; }
         public virtual DbSet<User> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
                 optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=MargaDharsi;Trusted_Connection=True;");
             }
         }
@@ -117,6 +118,33 @@ namespace API.Entites
                 entity.Property(e => e.Country1)
                     .HasMaxLength(150)
                     .HasColumnName("Country");
+            });
+
+            modelBuilder.Entity<Posting>(entity =>
+            {
+                entity.Property(e => e.DestinationAirport)
+                    .IsRequired()
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.DestinationCountry)
+                    .IsRequired()
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.OriginAirport)
+                    .IsRequired()
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.OriginCountry)
+                    .IsRequired()
+                    .HasMaxLength(250);
+
+                entity.Property(e => e.TravelDate).HasColumnType("date");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Postings)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Postings_Users");
             });
 
             OnModelCreatingPartial(modelBuilder);
