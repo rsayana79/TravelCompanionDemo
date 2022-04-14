@@ -1,6 +1,5 @@
 import { AuthGuard } from './_guards/auth.guard';
 import { ErrorComponent } from './error/error.component';
-import { DateslectorComponent } from './dateslector/dateslector.component';
 import { NotificationsComponent } from './notifications/notifications.component';
 import { AiportsListComponent } from './aiports-list/aiports-list.component';
 import { CountriesListComponent } from './countries-list/countries-list.component';
@@ -9,7 +8,7 @@ import { BookingsDataComponent } from './bookings-data/bookings-data.component';
 import { LoginComponent } from './login/login.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { DatePickerComponent } from './date-picker/date-picker.component';
+import { CreatepostingComponent } from './createposting/createposting.component';
 
 const routes: Routes = [
   {path: '', component: LoginComponent},
@@ -19,12 +18,11 @@ const routes: Routes = [
     canActivate : [AuthGuard],
     children :[
       {path: 'viewbookings', component: BookingsDataComponent},
+      {path: 'createposting', component: CreatepostingComponent},
       {path: 'messages', component: MessagesComponent},
       {path: 'country', component: CountriesListComponent},
       {path: 'airports', component: AiportsListComponent},
-      {path: 'notifications', component: NotificationsComponent},
-      {path: 'traveldate', component: DateslectorComponent},
-      {path: 'dateselector', component: DatePickerComponent}
+      {path: 'notifications', component: NotificationsComponent}
     ]
   },
   {path: '**', component: ErrorComponent, pathMatch:'full'}

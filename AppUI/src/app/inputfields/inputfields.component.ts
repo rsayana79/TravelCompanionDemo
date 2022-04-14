@@ -1,5 +1,6 @@
+import { Posting } from './../_models/posting';
 import { Airport } from './../_models/airport';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output } from '@angular/core';
 import { Country } from '../_models/country';
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
@@ -30,7 +31,14 @@ export class InputfieldsComponent implements OnInit {
   destinationCountryFilter: Observable<string[]>;
   originAirportFilter: Observable<string[]>;
   destinationAirportFilter: Observable<string[]>;
-  countrySelected : string;
+  originCountrySelected : string;
+  originAirportSelected : string;
+  destinationCountrySelected : string;
+  destinationAirportSelected : string;
+  dateSelected = new Date();
+  static postingData = new Posting() ;
+  
+
 
   constructor(private http: HttpClient, private countryService: CountryService, private airportService: AirportService) { }
 
@@ -44,6 +52,7 @@ export class InputfieldsComponent implements OnInit {
   }
 
   async intialize() {
+    InputfieldsComponent.postingData.traveldate = this.dateSelected;
     await this.delay(10)
     this.countries = this.countryService.countries;    
     this.populateCoutries();
@@ -105,12 +114,27 @@ export class InputfieldsComponent implements OnInit {
     this.getAirports(country); 
     await this.delay(100);   
     this.airports = this.airportService.airports; 
-    console.log(this.airports);  
+    //console.log(this.airports);
     if(source == 'originAirport'){
       this.populateOriginAirports(this.airports);
+      this.originCountrySelected = country;
+      InputfieldsComponent.postingData.origincountry = country;
     }    
     else if(source == 'destinationAirport'){
       this.populateDestinationAirports(this.airports);
+      this.destinationCountrySelected = country;
+      InputfieldsComponent.postingData.destinationcountry = country;
+    }
+  }
+
+  setairport(airport : string, source : string){    
+    if(source == 'origin'){
+      this.originAirportSelected = airport;
+      InputfieldsComponent.postingData.originairport = airport;
+    }    
+    else if(source == 'destination'){
+      this.destinationAirportSelected = airport;
+      InputfieldsComponent.postingData.destinationairport = airport;
     }
   }
 

@@ -15,17 +15,16 @@ import { BookingsDataComponent } from './bookings-data/bookings-data.component';
 import { AiportsListComponent } from './aiports-list/aiports-list.component';
 import { MessagesComponent } from './messages/messages.component';
 import { NotificationsComponent } from './notifications/notifications.component';
-import { DateslectorComponent } from './dateslector/dateslector.component';
 import { ErrorComponent } from './error/error.component';
 import { ToastrModule } from 'ngx-toastr';
 import { SharedModule } from './_modules/shared.module';
-import { DatePickerComponent } from './date-picker/date-picker.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { DateAdapter, MatNativeDateModule } from '@angular/material/core';
 import {MatInputModule} from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { InputfieldsComponent } from './inputfields/inputfields.component';
+import { CreatepostingComponent } from './createposting/createposting.component';
 
 
 @NgModule({
@@ -38,10 +37,9 @@ import { InputfieldsComponent } from './inputfields/inputfields.component';
     AiportsListComponent,
     MessagesComponent,
     NotificationsComponent,
-    DateslectorComponent,
     ErrorComponent,
-    DatePickerComponent,
-    InputfieldsComponent
+    InputfieldsComponent,
+    CreatepostingComponent
   ],
   imports: [
     BrowserModule,
