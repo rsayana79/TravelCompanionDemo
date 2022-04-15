@@ -1,4 +1,4 @@
-export class Posting{
+export interface Posting{
     traveldate:Date;
     origincountry:string;
     originairport:string;

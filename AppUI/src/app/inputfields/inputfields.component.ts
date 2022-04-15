@@ -36,7 +36,15 @@ export class InputfieldsComponent implements OnInit {
   destinationCountrySelected : string;
   destinationAirportSelected : string;
   dateSelected = new Date();
-  static postingData = new Posting() ;
+  static postingData : Posting = {
+    traveldate : null,
+    origincountry : null,
+    originairport : null,
+    destinationcountry : null,
+    destinationairport : null,
+    userid : null,
+    enableemailnotifications : true
+  };
   
 
 
@@ -53,8 +61,8 @@ export class InputfieldsComponent implements OnInit {
 
   async intialize() {
     InputfieldsComponent.postingData.traveldate = this.dateSelected;
-    await this.delay(10)
-    this.countries = this.countryService.countries;    
+    await this.delay(100)
+    this.countries = this.countryService.countries;        
     this.populateCoutries();
     this.originCountryFilter = this.originCountryFormControl.valueChanges.pipe(
       startWith(''),
