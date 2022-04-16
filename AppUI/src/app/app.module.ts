@@ -27,6 +27,7 @@ import { InputfieldsComponent } from './inputfields/inputfields.component';
 import { CreatepostingComponent } from './createposting/createposting.component';
 import { DatePipe } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
+import { MatSortModule} from '@angular/material/sort'
 
 
 @NgModule({
@@ -56,7 +57,8 @@ import { MatTableModule } from '@angular/material/table';
     MatNativeDateModule,
     MatInputModule,
     MatAutocompleteModule,
-    MatTableModule
+    MatTableModule,
+    MatSortModule
   ],
   providers: [
     MatDatepickerModule,

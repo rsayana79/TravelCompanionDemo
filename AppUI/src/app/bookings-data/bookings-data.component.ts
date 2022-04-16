@@ -21,6 +21,7 @@ export class BookingsDataComponent implements OnInit {
   displayedColumns: string[] = ['travelDate', 'originCountry', 'originAirport', 'destinationCountry', 'destinationAirport'];
   dataSource: MatTableDataSource<Posting>;
 
+
   constructor(private countryService: CountryService, private airportService: AirportService,
     private postingService: PostingService, private datePipe: DatePipe,
     private liveAnnouncer: LiveAnnouncer) { }
@@ -38,6 +39,9 @@ export class BookingsDataComponent implements OnInit {
     this.initializadateSouce();
   }
 
+  @ViewChild(MatSort) sort: MatSort;
+
+  
   getpostings(travelDate: string) {
     this.postingService.getPostings(travelDate);
   }
@@ -46,12 +50,14 @@ export class BookingsDataComponent implements OnInit {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  @ViewChild(MatSort) sort: MatSort;
+ //@ViewChild(MatSort) sort: MatSort;
 
   initializadateSouce(){
     this.dataSource = new MatTableDataSource(this.postings);
     this.dataSource.sort = this.sort;
     console.log(this.sort);
+    console.log(this.postings);
+    console.log(`data soiurce ${this.dataSource.sort}`)
   
   }
 

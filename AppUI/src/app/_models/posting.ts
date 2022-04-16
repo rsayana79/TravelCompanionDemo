@@ -1,9 +1,9 @@
 export interface Posting{
-    traveldate:Date;
-    origincountry:string;
-    originairport:string;
-    destinationcountry:string;
-    destinationairport:string;
+    travelDate:Date;
+    originCountry:string;
+    originAirport:string;
+    destinationCountry:string;
+    destinationAirport:string;
     enableemailnotifications:boolean;
-    userid:number;
+    userId:number;
 }

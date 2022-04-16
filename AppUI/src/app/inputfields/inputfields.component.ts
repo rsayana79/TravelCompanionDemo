@@ -37,12 +37,12 @@ export class InputfieldsComponent implements OnInit {
   destinationAirportSelected : string;
   dateSelected = new Date();
   static postingData : Posting = {
-    traveldate : null,
-    origincountry : null,
-    originairport : null,
-    destinationcountry : null,
-    destinationairport : null,
-    userid : null,
+    travelDate : null,
+    originCountry : null,
+    originAirport : null,
+    destinationCountry : null,
+    destinationAirport : null,
+    userId : null,
     enableemailnotifications : true
   };
   
@@ -60,7 +60,7 @@ export class InputfieldsComponent implements OnInit {
   }
 
   async intialize() {
-    InputfieldsComponent.postingData.traveldate = this.dateSelected;
+    InputfieldsComponent.postingData.travelDate = this.dateSelected;
     await this.delay(100)
     this.countries = this.countryService.countries;        
     this.populateCoutries();
@@ -126,23 +126,23 @@ export class InputfieldsComponent implements OnInit {
     if(source == 'originAirport'){
       this.populateOriginAirports(this.airports);
       this.originCountrySelected = country;
-      InputfieldsComponent.postingData.origincountry = country;
+      InputfieldsComponent.postingData.originCountry = country;
     }    
     else if(source == 'destinationAirport'){
       this.populateDestinationAirports(this.airports);
       this.destinationCountrySelected = country;
-      InputfieldsComponent.postingData.destinationcountry = country;
+      InputfieldsComponent.postingData.destinationCountry = country;
     }
   }
 
   setairport(airport : string, source : string){    
     if(source == 'origin'){
       this.originAirportSelected = airport;
-      InputfieldsComponent.postingData.originairport = airport;
+      InputfieldsComponent.postingData.originAirport = airport;
     }    
     else if(source == 'destination'){
       this.destinationAirportSelected = airport;
-      InputfieldsComponent.postingData.destinationairport = airport;
+      InputfieldsComponent.postingData.destinationAirport = airport;
     }
   }
 

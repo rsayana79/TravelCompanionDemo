@@ -16,9 +16,9 @@ export class CreatepostingComponent implements OnInit {
   }
 
   submitPosting(){
-    console.log(`from data is ${InputfieldsComponent.postingData.traveldate} 
-    origin:  ${InputfieldsComponent.postingData.origincountry} -- ${InputfieldsComponent.postingData.originairport}
-    destination:  ${InputfieldsComponent.postingData.destinationcountry} -- ${InputfieldsComponent.postingData.destinationairport}
+    console.log(`from data is ${InputfieldsComponent.postingData.travelDate} 
+    origin:  ${InputfieldsComponent.postingData.originCountry} -- ${InputfieldsComponent.postingData.originAirport}
+    destination:  ${InputfieldsComponent.postingData.destinationCountry} -- ${InputfieldsComponent.postingData.destinationAirport}
     email notifications ${this.enableEmailNotifications}`)
   }
 }
