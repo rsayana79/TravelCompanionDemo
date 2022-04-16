@@ -4,9 +4,10 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { CountryService } from '../_services/country.service';
 import { Posting } from '../_models/posting';
 import { DatePipe } from '@angular/common';
-import { MatTableModule, MatTableDataSource } from '@angular/material/table';
+import { MatTableDataSource } from '@angular/material/table';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { MatSort, Sort } from '@angular/material/sort';
+import { MatPaginator} from '@angular/material/paginator';
 
 
 @Component({
@@ -40,6 +41,7 @@ export class BookingsDataComponent implements OnInit {
   }
 
   @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
 
   
   getpostings(travelDate: string) {
@@ -55,9 +57,7 @@ export class BookingsDataComponent implements OnInit {
   initializadateSouce(){
     this.dataSource = new MatTableDataSource(this.postings);
     this.dataSource.sort = this.sort;
-    console.log(this.sort);
-    console.log(this.postings);
-    console.log(`data soiurce ${this.dataSource.sort}`)
+    this.dataSource.paginator = this.paginator;
   
   }
 

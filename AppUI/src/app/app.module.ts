@@ -28,6 +28,7 @@ import { CreatepostingComponent } from './createposting/createposting.component'
 import { DatePipe } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule} from '@angular/material/sort'
+import { MatPaginatorModule} from '@angular/material/paginator';
 
 
 @NgModule({
@@ -58,7 +59,8 @@ import { MatSortModule} from '@angular/material/sort'
     MatInputModule,
     MatAutocompleteModule,
     MatTableModule,
-    MatSortModule
+    MatSortModule,
+    MatPaginatorModule
   ],
   providers: [
     MatDatepickerModule,
