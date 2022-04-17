@@ -17,5 +17,9 @@ namespace API.Entites
         public byte[] PasswordSalt { get; set; }
 
         public virtual ICollection<Posting> Postings { get; set; }
+
+        public virtual ICollection<Message> MessagesSent { get; set; }
+
+        public virtual ICollection<Message> MessagesReceived { get; set; }
     }
 }

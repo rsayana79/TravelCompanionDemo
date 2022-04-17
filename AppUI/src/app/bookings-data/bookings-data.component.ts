@@ -18,7 +18,7 @@ import { MatPaginator} from '@angular/material/paginator';
 export class BookingsDataComponent implements OnInit {
 
   postings: Posting[];
-  defaultDate = this.datePipe.transform("2022-04-13", 'yyyy-MM-dd');
+  defaultDate = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
   displayedColumns: string[] = ['travelDate', 'originCountry', 'originAirport', 'destinationCountry', 'destinationAirport'];
   dataSource: MatTableDataSource<Posting>;
 

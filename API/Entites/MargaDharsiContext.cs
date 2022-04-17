@@ -23,14 +23,16 @@ namespace API.Entites
         public virtual DbSet<Posting> Postings { get; set; }
         public virtual DbSet<User> Users { get; set; }
 
-/*         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=MargaDharsi;Trusted_Connection=True;");
-            }
-        } */
+        public virtual DbSet<Message> Messages { get; set; }
+
+        /*         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+                {
+                    if (!optionsBuilder.IsConfigured)
+                    {
+        #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                        optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=MargaDharsi;Trusted_Connection=True;");
+                    }
+                } */
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -145,6 +147,21 @@ namespace API.Entites
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Postings_Users");
+            });
+
+
+            modelBuilder.Entity<Message>(entity =>
+            {
+                entity.HasOne(u => u.Recipient)
+                .WithMany(m => m.MessagesReceived)
+                .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<Message>(entity =>
+            {
+                entity.HasOne(u => u.Sender)
+                .WithMany(m => m.MessagesSent)
+                .OnDelete(DeleteBehavior.Restrict);
             });
 
             OnModelCreatingPartial(modelBuilder);
