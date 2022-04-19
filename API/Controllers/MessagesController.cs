@@ -62,19 +62,15 @@ namespace API.Controllers
 
 
         [HttpGet("GetMessagesForUser/{id}")]
-        public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMessagesForUser(int id,
-            [FromQuery] MessageParams messageParams)
+        public async Task<IEnumerable<UserDTO>> GetMessagesForUser(int id)
         {
-            User user = await _context.Users.SingleOrDefaultAsync(user => user.Id == id);
-            messageParams.Username = user.UserName;
+            User user = await _context.Users.SingleOrDefaultAsync(user => user.Id == id);            
 
-            var messages = await _messageRepository.GetMessagesForUser(messageParams);
-
+            var usersWithMessages = await _messageRepository.GetMessagesForUser(id);
 
 
-            Response.AddPaginationHeader(messages.CurrentPage, messages.PageSize, messages.TotalCount, messages.TotalPages);
 
-            return messages;
+            return usersWithMessages;
         }
 
 

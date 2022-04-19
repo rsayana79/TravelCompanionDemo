@@ -13,7 +13,7 @@ export class AccountService {
   private token : any;
   currentUser$ = this.currentUserSource.asObservable();
   loggedIn : boolean;
-  userName :string;
+  userName :string;  
   constructor(private http: HttpClient) { }
 
   login(model:any){
@@ -23,7 +23,7 @@ export class AccountService {
         if(user){
           localStorage.setItem('user', JSON.stringify(user));
           this.currentUserSource.next(user);
-          this.token = user.token;          
+          this.token = user.token;                 
         }
       })
     );
@@ -43,7 +43,7 @@ export class AccountService {
         if(user){
           localStorage.setItem('user', JSON.stringify(user));
           this.currentUserSource.next(user);
-          this.token = user.token;          
+          this.token = user.token;                
         }
         return user;
       })
@@ -53,6 +53,15 @@ export class AccountService {
   setCurrentUser(user: User){
     this.currentUserSource.next(user);
     this.token = user?.token;
+  }
+
+  getcurrentUserId() : number{
+    let id;
+    this.currentUser$.subscribe(user => {
+        if (user) {
+          id = user.id;}
+      });
+      return id;
   }
 
   logout(){

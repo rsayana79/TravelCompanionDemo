@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.DTOs;
 using API.Entites;
-using API.Helpers;
 
 namespace API.Interface
 {
@@ -15,7 +14,7 @@ namespace API.Interface
 
         Task<Message> GetMessage(int id);
 
-        Task<PagedList<MessageDTO>> GetMessagesForUser(MessageParams messageParams);
+        Task<IEnumerable<UserDTO>> GetMessagesForUser(int currentUserId);
         Task<IEnumerable<MessageDTO>> GetMessageThread(int senderId, int recipinetId);
 
         Task<bool> SaveAllAsync();

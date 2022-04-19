@@ -38,23 +38,51 @@ namespace API.Data
             return await _context.Messages.FindAsync(id);
         }
 
-        public async Task<PagedList<MessageDTO>> GetMessagesForUser(MessageParams messageParams)
+        public async Task<IEnumerable<UserDTO>> GetMessagesForUser(int currentUserID)
         {
-            var query = _context.Messages.OrderByDescending(message => message.MessageSent).AsQueryable();
+            var messages = _context.Messages.Where(message => message.RecipientId == currentUserID || message.SenderId == currentUserID).OrderByDescending(message => message.MessageSent).ToList();
 
-            query = messageParams.Container switch
+            List<UserDTO> userswithMessage = new List<UserDTO>();
+            HashSet<int> distinctUsers = new HashSet<int>();
+
+            foreach (var message in messages)
             {
-                "Inbox" => query.Where(u => u.RecipientUserName == messageParams.Username
-                    && u.UserDeleted == false),
-                "Outbox" => query.Where(u => u.SenderUserName == messageParams.Username
-                    && u.SenderDeleted == false),
-                _ => query.Where(u => u.RecipientUserName ==
-                    messageParams.Username && u.UserDeleted == false && u.DateRead == null)
-            };
+                //messages sent by the current user
+                if (message.SenderId == currentUserID)
+                {
+                    try
+                    {
+                        distinctUsers.Add(message.RecipientId);
+                    }
+                    catch (Exception e)
+                    {
+                        //user already added. no acrion needed
+                        string error = e.Message;
+                    }
+                }
+                //messages received to the current is
+                else if (message.RecipientId == currentUserID)
+                {
+                    try
+                    {
+                        distinctUsers.Add(message.SenderId);
+                    }
+                    catch (Exception e)
+                    {
+                        //user already added. no acrion needed
+                        string error = e.Message;
+                    }
+                }
+            }
 
-            var messages = query.ProjectTo<MessageDTO>(_mapper.ConfigurationProvider);
+            foreach (var userId in distinctUsers)
+            {
+                var user =  await _context.Users.FindAsync(userId);
+                userswithMessage.Add(_mapper.Map<UserDTO>(user));
+            }
 
-            return await PagedList<MessageDTO>.CreateAsync(messages, messageParams.PageNumber, messageParams.PageSize);
+            return userswithMessage.ToList();
+
         }
 
         public async Task<IEnumerable<MessageDTO>> GetMessageThread(int currentUserId, int recipinetUserId)
@@ -65,16 +93,19 @@ namespace API.Data
                 || m.Recipient.Id == recipinetUserId
                 && m.Sender.Id == currentUserId && m.SenderDeleted == false
                 )
-            .OrderBy(m => m.MessageSent)            
+            .OrderBy(m => m.MessageSent)
             .ToListAsync();
 
             //var unreadMessages = messages.Where(m => m.DateRead == null && m.Recipient.Id == currentUserId).ToList();
 
-            if(messages.Any()){
-                foreach(var message in messages){
-                    if(message.RecipientId == currentUserId && message.DateRead == null){
+            if (messages.Any())
+            {
+                foreach (var message in messages)
+                {
+                    if (message.RecipientId == currentUserId && message.DateRead == null)
+                    {
                         message.DateRead = DateTime.Now;
-                    }                    
+                    }
                 }
                 await _context.SaveChangesAsync();
             }
