@@ -14,6 +14,8 @@ namespace API.DTOs
         public string DestinationAirport { get; set; }
         public bool EnableEmailNotifications { get; set; }
         public int UserId { get; set; }
+
+        public string UserName { get; set; }
         
     }
 }

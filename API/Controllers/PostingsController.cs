@@ -30,7 +30,8 @@ namespace API.Controllers
         [HttpPost("AddPosting")]
         public async Task<ActionResult<PostingDTO>> AddPosting(PostingDTO postingDTO)
         {
-            var posting = new Posting{
+            var posting = new Posting
+            {
                 TravelDate = postingDTO.TravelDate,
                 OriginCountry = postingDTO.OriginCountry,
                 OriginAirport = postingDTO.OriginAirport,
@@ -48,12 +49,26 @@ namespace API.Controllers
         [Authorize]
         [Route("GetPostings/{travelDate?}")]
         [HttpGet(Name = "GetPostings")]
-        public async Task<ActionResult<IEnumerable<Posting>>> GetPostings(string travelDate)
+        public async Task<ActionResult<IEnumerable<PostingDTO>>> GetPostings(string travelDate)
         {
             Console.WriteLine(travelDate);
             DateTime parsedTravelDate = DateTime.Parse(travelDate);
-            return  await _context.Postings.Where(country => country.TravelDate == parsedTravelDate).ToListAsync();
-             
+            var postings = await _context.Postings.Where(country => country.TravelDate == parsedTravelDate).ToListAsync();
+            List<PostingDTO> postingsDTO = new List<PostingDTO>();            
+            foreach (var posting in postings)
+            {
+                var postingDTO = new PostingDTO();
+                postingDTO.TravelDate = posting.TravelDate;
+                postingDTO.OriginCountry = posting.OriginCountry;
+                postingDTO.OriginAirport = posting.OriginAirport;
+                postingDTO.DestinationCountry = posting.DestinationCountry;
+                postingDTO.DestinationAirport = posting.DestinationAirport;
+                postingDTO.EnableEmailNotifications = posting.EnableEmailNotifications;
+                postingDTO.UserId = posting.UserId;
+                postingDTO.UserName = _context.Users.Find(posting.UserId).UserName;
+                postingsDTO.Add(postingDTO);
+            }
+            return postingsDTO;
         }
     }
 }
