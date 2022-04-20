@@ -40,4 +40,12 @@ export class MessageService {
     })
     return this.messages;
   }
+
+  createMessage(message : Message){
+    this.http.post(this.baseUrl  + 'createMessage', message, { headers: this.accountService.getHeader() }).subscribe(response => {
+      if (response) {        
+        console.log(response);
+      }
+    })
+  }
 }

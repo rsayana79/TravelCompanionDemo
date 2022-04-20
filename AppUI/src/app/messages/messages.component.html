@@ -1,18 +1,27 @@
-<div class="d-flex flex-row align-items-start" style="height:100%">
+<div class="d-flex flex-row align-items-start" style="max-height: 20em;">
     <div class="d-flex flex-column p-2" style="width:15%">
-        <button *ngFor="let user of this.users" (click)="loadMessageThread(user)" class="d-flex p-2 btn btn-outline-info" style="width: 100%; margin-bottom:5%;">
-                   {{user.userName}}
+        <button *ngFor="let user of this.users" (click)="loadMessageThread(user)"
+            class="d-flex p-2 btn btn-outline-info" style="width: 100%; margin-bottom:5%;">
+            {{user.userName}}
         </button>
     </div>
-    <div class="card border-primary p-2 d-flex flex-column" style="width:50%;">
-        <div class="flex-row text-success"
-        *ngFor="let message of messages" style="width: 100%;">
-            <p [ngClass]="{'d-flex flex-row-reverse text-danger': message.senderId == this.accountService.getcurrentUserId()}"
-            >{{message.content}}</p>
-            
-        </div>        
+    <div class="card overflow-auto border-primary p-2 d-flex flex-column column-reverse;" style="width:50%;max-height:20em; min-height:20em">
+        <div class="flex-row text-success" *ngFor="let message of messages" style="width: 100%;">
+            <p
+                [ngClass]="{'d-flex flex-row-reverse text-danger': message.senderId == this.accountService.getcurrentUserId()}">
+                {{message.content}}</p>
+
+        </div>
     </div>
 </div>
-<!-- 
-[ngClass]="{'d-flex justify-content-left': message.recipientId == this.accountService.getcurrentUserId()}"
-        [ngClass]="{'align-self-end justify-content-right': message.senderId == this.accountService.getcurrentUserId()}" -->
+<div class="mb-3 textarea-container" style="width:50%; margin-left:15%; margin-top: 1%;">
+    <textarea class="form-control text-danger" id="exampleFormControlTextarea1" rows="3"
+        placeholder="Type your message here" [(ngModel)]="newMessage"></textarea>
+    <button type="button" class="btn btn-primary" (click)="createMessage()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send"
+            viewBox="0 0 16 16">
+            <path
+                d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576 6.636 10.07Zm6.787-8.201L1.591 6.602l4.339 2.76 7.494-7.493Z" />
+        </svg>
+    </button>
+</div>

@@ -64,6 +64,15 @@ export class AccountService {
       return id;
   }
 
+  getcurrentUserName() : string{
+    let userName;
+    this.currentUser$.subscribe(user => {
+        if (user) {
+          userName = user.userName;}
+      });
+      return userName;
+  }
+
   logout(){
     localStorage.removeItem('user');
     this.currentUserSource.next(null);
