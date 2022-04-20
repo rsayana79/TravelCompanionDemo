@@ -25,4 +25,12 @@ export class PostingService {
     })
     return this.postings;
   }
+
+  createPosting(posting : Posting){
+    this.http.post(this.baseUrl + "/postings/addposting", posting, { headers: this.accountService.getHeader() }).subscribe(response => {
+      if (response) {
+        console.log(response);
+      }
+    })
+  }
 }

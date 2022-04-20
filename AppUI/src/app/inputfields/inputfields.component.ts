@@ -8,6 +8,7 @@ import { HttpClient } from '@angular/common/http';
 import { CountryService } from '../_services/country.service';
 import { AirportService } from '../_services/airport.service';
 import { map, startWith } from 'rxjs/operators';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-inputfields',
@@ -48,7 +49,7 @@ export class InputfieldsComponent implements OnInit {
   
 
 
-  constructor(private http: HttpClient, private countryService: CountryService, private airportService: AirportService) { }
+  constructor(private http: HttpClient, private countryService: CountryService, private airportService: AirportService, private datePipe : DatePipe) { }
 
   ngOnInit(): void {
     if (this.countryService.countries === undefined) {
@@ -60,7 +61,7 @@ export class InputfieldsComponent implements OnInit {
   }
 
   async intialize() {
-    InputfieldsComponent.postingData.travelDate = this.dateSelected;
+    InputfieldsComponent.postingData.travelDate = this.datePipe.transform(this.dateSelected, "YYYY-MM-dd");
     await this.delay(100)
     this.countries = this.countryService.countries;        
     this.populateCoutries();

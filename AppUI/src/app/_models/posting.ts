@@ -1,5 +1,5 @@
 export interface Posting{
-    travelDate:Date;
+    travelDate:string;
     originCountry:string;
     originAirport:string;
     destinationCountry:string;
