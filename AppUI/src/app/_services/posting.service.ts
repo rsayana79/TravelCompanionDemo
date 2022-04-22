@@ -1,3 +1,4 @@
+import { ToastrService } from 'ngx-toastr';
 import { Posting } from './../_models/posting';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
@@ -12,7 +13,7 @@ export class PostingService {
   postings: Posting[];
 
 
-  constructor(private http: HttpClient, private accountService: AccountService) { }
+  constructor(private http: HttpClient, private accountService: AccountService, private toastr: ToastrService) { }
 
   getPostings(travelDate: string) {
     this.http.get(this.baseUrl + "/postings/getpostings/"+travelDate, { headers: this.accountService.getHeader() }).subscribe(response => {
@@ -30,6 +31,7 @@ export class PostingService {
     this.http.post(this.baseUrl + "/postings/addposting", posting, { headers: this.accountService.getHeader() }).subscribe(response => {
       if (response) {
         console.log(response);
+        this.toastr.success('Your posting is added. Please navigate to the Exisiting posts tab')
       }
     })
   }

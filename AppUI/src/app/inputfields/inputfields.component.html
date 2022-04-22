@@ -1,7 +1,7 @@
 <div class="p-2">
     <mat-form-field>
         <mat-label>Travel Date</mat-label>
-        <input matInput [matDatepicker]="picker" [(value)]="dateSelected">
+        <input matInput [matDatepicker]="picker" [min]="dateSelected" [(value)]="dateSelected">
         <mat-hint>MM/DD/YYYY</mat-hint>
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
