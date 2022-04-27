@@ -1,7 +1,8 @@
+import { take } from 'rxjs/operators';
 import { AccountService } from './../_services/account.service';
 import { MessageService } from './../_services/message.service';
 import { Message } from './../_models/message';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { User } from '../_models/user';
 import { Router } from '@angular/router';
 
@@ -10,7 +11,7 @@ import { Router } from '@angular/router';
   templateUrl: './messages.component.html',
   styleUrls: ['./messages.component.css']
 })
-export class MessagesComponent implements OnInit {
+export class MessagesComponent implements OnInit, OnDestroy {
 
   messages: Message[];
   users: User[];
@@ -20,10 +21,14 @@ export class MessagesComponent implements OnInit {
   newMessage: string;
   userIDInCurrentChat: number;
   userNameInCurrentChat: string;
+  currentUser : User;
 
-
-
-  constructor(private messageService: MessageService, private accountService: AccountService, private router: Router) { }
+  constructor(public messageService: MessageService, private accountService: AccountService, private router: Router) { 
+    this.accountService.currentUser$.pipe(take(1)).subscribe(user => this.currentUser = user);
+  }
+  ngOnDestroy(): void {
+    this.messageService.stopHubConnection();
+  }
 
   async ngOnInit(): Promise<void> {
     this.getusers();
@@ -39,9 +44,11 @@ export class MessagesComponent implements OnInit {
   }
 
 
-  async getMessageThread(id: number) {
-    this.messageService.getMessageThread(id);
-    await this.delay(100);
+  async getMessageThread(currentUserId : number, userId: number) {
+    this.messageService.createHubConnection(this.currentUser, userId)
+/*     await this.delay(100);
+    this.messageService.getMessageThread(currentUserId, userId);
+    await this.delay(100); */
   }
 
   delay(ms: number) {
@@ -59,26 +66,23 @@ export class MessagesComponent implements OnInit {
     })
   }
 
-  printUsers() {
-    this.users.forEach((user) => {
-      console.log(`user is ${user.userName}`)
-    })
-  }
 
   async loadMessageThread(user: User) {
     if (this.users.length > 0) {
-      this.getMessageThread(user.id);
+      this.getMessageThread(this.currentUser.id, user.id);
     }
-    await this.delay(100);
+/*     await this.delay(100);
     this.messages = this.messageService.messages;
-    await this.delay(10);
+    await this.delay(10); */
     this.userIDInCurrentChat = user.id;
+    this.messageService.userIDInCurrentChat = this.userIDInCurrentChat;
     this.userNameInCurrentChat = user.userName;
     this.newMessage = null;
   }
 
   async createMessage() {
     var message: Message = {
+      currentUserID : this.accountService.getcurrentUserId(),
       senderId: this.accountService.getcurrentUserId(),
       senderUserName: this.accountService.getcurrentUserName(),
       recipientId: this.userIDInCurrentChat,
@@ -88,15 +92,9 @@ export class MessagesComponent implements OnInit {
       messageSent: new Date()
     };
     console.log(`message in chat window is ${this.newMessage} and chatting with ${this.userIDInCurrentChat}`);
-    this.messageService.createMessage(message);
+    this.newMessage ="";
     await this.delay(100);
-/*     var user : User = {
-      id: this.userIDInCurrentChat,
-      userName: this.userNameInCurrentChat,
-      token: null
-    };
-    this.loadMessageThread(user); */
-    this.messages.push(message);
+    this.messageService.createMessage(message);
   }
 
 }

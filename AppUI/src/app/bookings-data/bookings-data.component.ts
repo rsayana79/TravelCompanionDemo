@@ -1,3 +1,5 @@
+import { take } from 'rxjs/operators';
+import { User } from './../_models/user';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { MessageService } from './../_services/message.service';
 import { AccountService } from './../_services/account.service';
@@ -31,6 +33,7 @@ export class BookingsDataComponent implements OnInit {
   messagePostedByUserName: string;
   dateSelected = new Date();
   showMessageWindow = false;
+  currentUser : User;
 
 
   constructor(private countryService: CountryService, private airportService: AirportService,
@@ -42,6 +45,7 @@ export class BookingsDataComponent implements OnInit {
   ngOnInit(): void {
     this.getpostings(this.datePipe.transform(new Date(), 'yyyy-MM-dd'))
     this.intialize();
+    this.accountService.currentUser$.pipe(take(1)).subscribe(user => this.currentUser = user);
   }
 
   async intialize() {
@@ -88,9 +92,10 @@ export class BookingsDataComponent implements OnInit {
     this.showMessageWindow = false;
   }
 
-  contactSender() {
+  async contactSender() {
     console.log(`message is ${this.newMessage}`);
     var message: Message = {
+      currentUserID : this.accountService.getcurrentUserId(),
       senderId: this.accountService.getcurrentUserId(),
       senderUserName: this.accountService.getcurrentUserName(),
       recipientId: this.messagePostedById,
@@ -99,9 +104,8 @@ export class BookingsDataComponent implements OnInit {
       dateRead: null,
       messageSent: new Date()
     };
-    this.messageService.createMessage(message);
+    this.messageService.createMessagefromPostings(message);
     this.toastr.success("Your message is on it's way. Look in the messages tab for a response");
-
     this.showMessageWindow = false;
     this.newMessage = null;
   }

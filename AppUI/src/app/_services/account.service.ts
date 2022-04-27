@@ -1,3 +1,4 @@
+import { PresenceService } from './presence.service';
 import { User } from './../_models/user';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -10,20 +11,20 @@ import { ReplaySubject } from 'rxjs';
 export class AccountService {
   baseUrl = "https://localhost:5001/api";
   private currentUserSource = new ReplaySubject<User>(1);
-  private token : any;
+  public token : any;
   currentUser$ = this.currentUserSource.asObservable();
   loggedIn : boolean;
   userName :string;  
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private presenceService : PresenceService) { }
 
   login(model:any){
     this.userName = model.loginId;
     return this.http.post(this.baseUrl + "/accounts/login", model).pipe(
       map((user:User)=>{
         if(user){
-          localStorage.setItem('user', JSON.stringify(user));
-          this.currentUserSource.next(user);
-          this.token = user.token;                 
+          this.setCurrentUser(user);        
+          this.presenceService.createHubConnection(user);  
+          localStorage.setItem('user', JSON.stringify(user));      
         }
       })
     );
@@ -41,9 +42,9 @@ export class AccountService {
     return this.http.post(this.baseUrl + "/accounts/register", model).pipe(
       map((user:User)=>{
         if(user){
-          localStorage.setItem('user', JSON.stringify(user));
-          this.currentUserSource.next(user);
-          this.token = user.token;                
+          this.setCurrentUser(user);  
+          this.presenceService.createHubConnection(user);   
+          localStorage.setItem('user', JSON.stringify(user));            
         }
         return user;
       })
@@ -77,5 +78,6 @@ export class AccountService {
     localStorage.removeItem('user');
     this.currentUserSource.next(null);
     this.token = null;
+    this.presenceService.stopHubConnection();
   }
 }

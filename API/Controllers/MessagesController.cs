@@ -7,9 +7,11 @@ using API.Entites;
 using API.Extensions;
 using API.Helpers;
 using API.Interface;
+using API.SignalR;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Controllers
@@ -22,15 +24,18 @@ namespace API.Controllers
         private MargaDharsiContext _context;
         private readonly IMessageRepository _messageRepository;
         private readonly IMapper _mapper;
-        public MessagesController(IMessageRepository messageRepository, IMapper mapper, MargaDharsiContext context)
+
+        private readonly IHubContext<MessageHub> _messageHub;
+        public MessagesController(IMessageRepository messageRepository, IMapper mapper, MargaDharsiContext context, IHubContext<MessageHub> messageHub)
         {
             _mapper = mapper;
             _messageRepository = messageRepository;
             _context = context;
+            _messageHub = messageHub;
         }
 
         [HttpPost("CreateMessage")]
-        public async Task<ActionResult<MessageDTO>> CreateMessage(CreateMessageDTO createMessageDto)
+        public async Task<ActionResult<MessageDTO>> CreateMessage(MessageDTO createMessageDto)
         {
             var username = User.GetUsername();
 
@@ -52,9 +57,10 @@ namespace API.Controllers
                 Content = createMessageDto.Content
             };
 
-            _messageRepository.AddMessage(message);
-
-            if (await _messageRepository.SaveAllAsync()) return Ok(_mapper.Map<MessageDTO>(message));
+            bool messageAddedSuccessfully = await _messageRepository.AddMessage(message);
+            var users = await GetMessagesForUser(message.Recipient.Id);
+            await _messageHub.Clients.User(message.RecipientUserName).SendAsync("GetUsersWithMessages", users);
+            if (messageAddedSuccessfully) return Ok(_mapper.Map<MessageDTO>(message));
 
             return BadRequest("Failed to send message");
 
@@ -67,8 +73,6 @@ namespace API.Controllers
             User user = await _context.Users.SingleOrDefaultAsync(user => user.Id == id);            
 
             var usersWithMessages = await _messageRepository.GetMessagesForUser(id);
-
-
 
             return usersWithMessages;
         }

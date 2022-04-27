@@ -1,12 +1,17 @@
 <div class="d-flex flex-row align-items-start" style="max-height: 20em;">
     <div class="d-flex flex-column p-2" style="width:15%">
-        <button *ngFor="let user of this.users" (click)="loadMessageThread(user)"
+        <button *ngFor="let user of (messageService.userThread$ | async)" (click)="loadMessageThread(user)"
             class="d-flex p-2 btn btn-outline-info" style="width: 100%; margin-bottom:5%;">
             {{user.userName}}
         </button>
     </div>
-    <div class="card overflow-auto border-primary p-2 d-flex flex-column column-reverse;" style="width:50%;max-height:20em; min-height:20em">
-        <div class="flex-row text-success" *ngFor="let message of messages" style="width: 100%;">
+    <div class="card overflow-auto border-primary p-2 d-flex flex-column column-reverse;"
+        style="width:50%;max-height:20em; min-height:20em">
+        <div class="card-header bg-info text-white">
+            <h4>Chatting with - {{this.userNameInCurrentChat}}</h4>
+        </div>
+        <div class="flex-row text-success" *ngFor="let message of (messageService.messages)"
+            style="width: 100%;">
             <p
                 [ngClass]="{'d-flex flex-row-reverse text-danger': message.senderId == this.accountService.getcurrentUserId()}">
                 {{message.content}}</p>

@@ -7,6 +7,7 @@ using API.Entites;
 using API.Helpers;
 using API.Interface;
 using API.Services;
+using API.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Extensions
@@ -17,6 +18,9 @@ namespace API.Extensions
             services.AddScoped<ITokenService, TokenService>();
             services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
             services.AddScoped<IMessageRepository, MessageRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddSingleton<PresenceTracker>();
             services.AddDbContext<DataContext>(options =>{
                 options.UseSqlServer(config.GetConnectionString("DefaultConnection"));
             });

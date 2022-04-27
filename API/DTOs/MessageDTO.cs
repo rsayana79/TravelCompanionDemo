@@ -2,6 +2,7 @@ namespace API.DTOs
 {
     public class MessageDTO
     {
+        public int CurrentUserID { get; set; }
         public int SenderId { get; set; }
 
         public string SenderUserName { get; set; }
