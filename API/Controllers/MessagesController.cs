@@ -57,9 +57,12 @@ namespace API.Controllers
                 Content = createMessageDto.Content
             };
 
+
+
             bool messageAddedSuccessfully = await _messageRepository.AddMessage(message);
-            var users = await GetMessagesForUser(message.Recipient.Id);
-            await _messageHub.Clients.User(message.RecipientUserName).SendAsync("GetUsersWithMessages", users);
+            var newUser =  _mapper.Map<UserDTO>(sender);
+            newUser.NewMessagesCount = await _messageRepository.NewMessageCountBetweenUsers(message.RecipientId, sender.Id);            
+            await _messageHub.Clients.User(message.RecipientId.ToString()).SendAsync("MessageFromNewUser", newUser);
             if (messageAddedSuccessfully) return Ok(_mapper.Map<MessageDTO>(message));
 
             return BadRequest("Failed to send message");
@@ -68,11 +71,11 @@ namespace API.Controllers
 
 
         [HttpGet("GetMessagesForUser/{id}")]
-        public async Task<IEnumerable<UserDTO>> GetMessagesForUser(int id)
+        public async Task<IEnumerable<UserDTO>> GetUsersWithMessages(int id)
         {
             User user = await _context.Users.SingleOrDefaultAsync(user => user.Id == id);            
 
-            var usersWithMessages = await _messageRepository.GetMessagesForUser(id);
+            var usersWithMessages = await _messageRepository.GetUsersWithMessages(id);
 
             return usersWithMessages;
         }

@@ -39,7 +39,7 @@ namespace API.Data
             return await _context.Messages.FindAsync(id);
         }
 
-        public async Task<IEnumerable<UserDTO>> GetMessagesForUser(int currentUserID)
+        public async Task<IEnumerable<UserDTO>> GetUsersWithMessages(int currentUserID)
         {
             var messages = _context.Messages.Where(message => message.RecipientId == currentUserID || message.SenderId == currentUserID).OrderByDescending(message => message.MessageSent).ToList();
 
@@ -79,6 +79,7 @@ namespace API.Data
             foreach (var userId in distinctUsers)
             {
                 var user = await _context.Users.FindAsync(userId);
+                user.NewMessagesCount = await NewMessageCountBetweenUsers(currentUserID, userId);
                 userswithMessage.Add(_mapper.Map<UserDTO>(user));
             }
 
@@ -143,6 +144,19 @@ namespace API.Data
         public void AddGroup(Group group)
         {
             _context.Groups.Add(group);
+        }
+
+        public async Task<int> NewMessageCountBetweenUsers(int currentUserId, int senderId)
+        {
+            var messages =await _context.Messages.Where(message => message.RecipientId == currentUserId && message.SenderId == senderId 
+                && message.DateRead == null).ToListAsync();        
+            return messages.Count;
+        }
+
+        public async Task<int> TotalNewMessagesForUser(int currentUserId)
+        {
+            var messages =await _context.Messages.Where(message => message.DateRead == null && message.RecipientId == currentUserId).ToListAsync();        
+            return messages.Count;
         }
     }
 }

@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 using API.Interface;
 using Microsoft.AspNetCore.Authorization;
+using API.Entites;
 
 namespace API.Controllers
 {
@@ -19,14 +20,17 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class AccountsController : ControllerBase
     {
-        private readonly DataContext _context;
+        private readonly MargaDharsiContext _context;
 
         private readonly ITokenService _tokenService;
 
-        public AccountsController(DataContext context, ITokenService tokenService)
+        private readonly IMessageRepository _messageRepository;
+
+        public AccountsController(MargaDharsiContext context, ITokenService tokenService, IMessageRepository messageRepository)
         {
             _tokenService = tokenService;
             _context = context;
+            _messageRepository = messageRepository;
         }
 
         [AllowAnonymous]
@@ -36,7 +40,7 @@ namespace API.Controllers
             if (await UserNameExists(registerDTO.UserName)) return BadRequest("User Name is unavailable");
             if (await EmailExists(registerDTO.EmailId)) return BadRequest("Email ID is already registered. Please login into the website");            
             using var hmac = new HMACSHA512();
-            var user = new AppUser
+            var user = new User
             {
                 UserName = registerDTO.UserName.ToLower(),
                 EmailId = registerDTO.EmailId.ToLower(),
@@ -49,7 +53,8 @@ namespace API.Controllers
             {
                 Id = user.Id,
                 UserName = user.UserName,
-                Token = _tokenService.CreateToken(user)
+                Token = _tokenService.CreateToken(user),
+                NewMessagesCount = 0
             };
 
         }
@@ -80,7 +85,8 @@ namespace API.Controllers
             {
                 Id = user.Id,
                 UserName = user.UserName,
-                Token = _tokenService.CreateToken(user)
+                Token = _tokenService.CreateToken(user),
+                NewMessagesCount = await _messageRepository.TotalNewMessagesForUser(user.Id)
             };
         }
 

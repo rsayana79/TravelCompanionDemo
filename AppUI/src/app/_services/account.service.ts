@@ -14,7 +14,8 @@ export class AccountService {
   public token : any;
   currentUser$ = this.currentUserSource.asObservable();
   loggedIn : boolean;
-  userName :string;  
+  userName :string;
+  newMessagesCount : number;  
   constructor(private http: HttpClient, private presenceService : PresenceService) { }
 
   login(model:any){
@@ -22,6 +23,7 @@ export class AccountService {
     return this.http.post(this.baseUrl + "/accounts/login", model).pipe(
       map((user:User)=>{
         if(user){
+          this.newMessagesCount = user.newMessagesCount;
           this.setCurrentUser(user);        
           this.presenceService.createHubConnection(user);  
           localStorage.setItem('user', JSON.stringify(user));      

@@ -78,12 +78,12 @@ namespace API.SignalR
             var groupName = GetGroupName(sender.UserName, recipient.UserName);
 
             var group = await _unitOfWork.MessageRepository.GetMessageGroup(groupName);
-
-            if (group !=null && group.Connections.Any(x => x.Username == recipient.UserName))
-            {
-                message.DateRead = DateTime.UtcNow;
-            }
-            else
+            /* 
+                        if (group !=null && group.Connections.Any(x => x.Username == recipient.UserName))
+                        {
+                            message.DateRead = DateTime.UtcNow;
+                        } */
+            if (!(group != null && group.Connections.Any(x => x.Username == recipient.UserName)))
             {
                 var connections = await _tracker.GetConnectionsForUser(recipient.UserName);
                 if (connections != null)
@@ -93,13 +93,13 @@ namespace API.SignalR
                 }
             }
 
-            
-/*             if(createMessageDto.CurrentUserID == sender.Id){
-                await GetUsersWithMessages(recipient);            
-            }
-            else if(createMessageDto.CurrentUserID == recipient.Id){
-                await GetUsersWithMessages(sender);
-            } */
+
+            /*             if(createMessageDto.CurrentUserID == sender.Id){
+                            await GetUsersWithMessages(recipient);            
+                        }
+                        else if(createMessageDto.CurrentUserID == recipient.Id){
+                            await GetUsersWithMessages(sender);
+                        } */
 
             if (await _unitOfWork.MessageRepository.AddMessage(message))
             {
@@ -153,12 +153,18 @@ namespace API.SignalR
 
         public async Task<IEnumerable<UserDTO>> GetUsersWithMessages(User user)
         {
-            var users = await _unitOfWork.MessageRepository.GetMessagesForUser(user.Id);
+            var users = await _unitOfWork.MessageRepository.GetUsersWithMessages(user.Id);
             if (_unitOfWork.HasChanges()) await _unitOfWork.Complete();
 
-            await Clients.User(user.UserName).SendAsync("GetUsersWithMessages", users);
+            await Clients.Caller.SendAsync("GetUsersWithMessages", users);
             return users;
 
         }
+
+/*         public async Task<UserDTO> MessageFromNewUser(User user)
+        {
+            await Clients.Caller.SendAsync("MessageFromNewUser", user);
+            return _mapper.Map<UserDTO>(user);
+        } */
     }
 }

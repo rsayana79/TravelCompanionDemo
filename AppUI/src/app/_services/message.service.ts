@@ -14,17 +14,15 @@ import { Group } from '../_models/groups';
 })
 export class MessageService {
   messages: Message[];
-  users: User[]
+  users: User[];
+  newMessageCounter : number[];
   baseUrl = "https://localhost:5001/api/messages/";
   hubUrl = "https://localhost:5001/hubs/";
   private hubConnection: HubConnection;
-  private messageThreadSource = new BehaviorSubject<Message[]>([]);
-  private userThreadSource = new BehaviorSubject<User[]>([]);
-  messageThread$ = this.messageThreadSource.asObservable();
-  userThread$ = this.userThreadSource.asObservable();
   currentUser: User;
   userIDInCurrentChat: number;
   usersChatHub = new Map();
+  usersmessageCounter = new Map<number, number>();
   constructor(private http: HttpClient, private accountService: AccountService, private busyService: BusyService) { }
 
   async createHubConnection(user: User, recipientUserId: number) {
@@ -56,8 +54,39 @@ export class MessageService {
     }
 
     this.hubConnection.on('GetUsersWithMessages', users => {
-      console.log(`users returned from hub ${users}`);
-      this.userThreadSource.next(users);
+      console.log(`total users returned is ${users.length}`);
+      for(var i = 0; i <users.length; i++){
+        this.usersChatHub.set(users[i].userName, users[i].newMessagesCount);
+        //this.usersmessageCounter.set(users[i].userName, users[i].newMessagesCount);
+        //this.users.push(user);
+        console.log(`users returned from hub ${users[i].userName}`);
+        //this.newMessageCounter.push(users[i].newMessagesCount);
+      }      
+    })
+
+    this.hubConnection.on('MessageFromNewUser' , user => 
+    {
+      console.log(`new message from new user ${user.userName} and new message counr is ${user.newMessagesCount}`);
+      if (!this.usersChatHub?.has(user.userName)){  
+        for (let entry of this.usersChatHub.entries()) {
+         console.log(`map data is ${entry[0]} and ${entry[1]}`)          
+        } 
+        this.usersChatHub.set(user.id, user.newMessagesCount);
+        this.users.push(user);
+      }
+      else{
+        console.log(`came into else`)
+        this.users.map((currentUser, index) => {
+           //equivalent to list[index]
+           console.log(`came into map. current user is ${currentUser.id} name is ${currentUser.userName} and index is ${index}`)
+           if(currentUser.id == user.id){
+             this.users[index].newMessagesCount++;
+             console.log(`incremented message count is ${this.users[index].newMessagesCount}`);
+           }
+        });
+        //(this.usersmessageCounter.get(message.senderId))++;
+        //increment message counter for message.senderName 
+      }
     })
 
     this.hubConnection.on('ReceiveMessageThread', messages => {
@@ -66,41 +95,32 @@ export class MessageService {
         this.messages.push(messages[i]);
       }
       console.log(`messages array retuned is ${messages}`);
-      var messageThreadSource = new BehaviorSubject<Message[]>([]);
-      this.messageThreadSource.next(messages);
-      this.usersChatHub.set(recipientUserId, messageThreadSource);
+      var messageThreadSource = new BehaviorSubject<Message[]>([]);    
+      //this.usersChatHub.set(recipientUserId, messageThreadSource);
     })
 
     this.hubConnection.on('NewMessage', message => {
-      if(this.userIDInCurrentChat == message.senderId || this.userIDInCurrentChat == message.recipientId){
+      console.log(`received new message from hub is ${message.content}`)
+      if(this.userIDInCurrentChat == message.senderId){
         this.messages.push(message);
       }
-      console.log(`new message recevied is ${message.content}`)
-      var newMessage$ = this.usersChatHub.get(message.recipientId).asObsevable();
-      this.messageThread$.pipe(take(1)).subscribe(messages => {
-        this.messageThreadSource.next([...messages, message])
-      })
-    })
-
-
-    /* this.hubConnection.on('UpdatedGroup', (group: Group) => {
-      if (group.connections.some(x => x.username === otherUsername)) {
-        this.messageThread$.pipe(take(1)).subscribe(messages => {
-          messages.forEach(message => {
-            if (!message.dateRead) {
-              message.dateRead = new Date(Date.now())
-            }
-          })
-          this.messageThreadSource.next([...messages]);
-        })
+      else{
+        console.log(`came into else`)
+        this.users.map((currentUser, index) => {
+           //equivalent to list[index]
+           console.log(`came into map. current user is ${currentUser.id} name is ${currentUser.userName} and index is ${index}`)
+           if(currentUser.id == message.senderId){
+             this.users[index].newMessagesCount++;
+             console.log(`incremented message count is ${this.users[index].newMessagesCount}`);
+           }
+        });
       }
-    }) */
+    })
   }
 
   stopHubConnection() {
     if (this.hubConnection) {
-      console.log(`from stopping hub connection ${this.hubConnection}`);
-      //this.messageThreadSource.next([]);
+      console.log(`from stopping hub connection ${this.hubConnection}`);      
       this.hubConnection.stop();
       this.usersChatHub.clear();
     }
@@ -109,10 +129,12 @@ export class MessageService {
   getUsersInChat() {
     let currentUser = this.accountService.getcurrentUserId();
     this.http.get(this.baseUrl + 'getmessagesforuser/' + currentUser, { headers: this.accountService.getHeader() }).subscribe(response => {
-      if (response) {
+      if (response) {      
         this.users = [];
         for (var i = 0; i < ((<any>response).length); i++) {
+          console.log(response[i]);
           this.users.push(response[i]);
+          console.log(`returned user is ${response[i].userName}`)
         }
       }
     })
@@ -120,53 +142,31 @@ export class MessageService {
   }
 
 
-  async getMessageThread(senderId: number, recipientId: number) {
-    /*     let currentUser = this.accountService.getcurrentUserId();
-        this.http.get(this.baseUrl + 'messagethread/' + currentUser + '/' + id, { headers: this.accountService.getHeader() }).subscribe(response => {
-          if (response) {
-            this.messages = [];
-            for (var i = 0; i < ((<any>response).length); i++) {
-              this.messages.push(response[i]);
-            }
-          }
-        })
-        return this.messages; */
-    /*     if (!this.hubConnection) {
-          this.accountService.currentUser$.pipe(take(1)).subscribe(user => this.currentUser = user);
-          this.createHubConnection(this.currentUser, recipientId)
-          await this.delay(500);
-        } */
-    if (!this.usersChatHub.has(recipientId)) {
+  async getMessageThread(senderId: number, recipientId: number, recipientName : string) {
+    if (!this.usersChatHub.has(recipientName)) {
       this.accountService.currentUser$.pipe(take(1)).subscribe(user => this.currentUser = user);
       await this.createHubConnection(this.currentUser, recipientId)
     }
     else {
-      return this.hubConnection.invoke('GetMessageThread', senderId, recipientId).catch(error => {
+      return this.hubConnection.invoke('GetMessageThread', senderId, recipientId).then(()=>{
+        this.users.map((currentUser, index) => {
+          //equivalent to list[index]
+          console.log(`came into map. current user is ${currentUser.id} name is ${currentUser.userName} and index is ${index}`)
+          if(currentUser.id == recipientId){
+            this.users[index].newMessagesCount = 0;
+            console.log(`New messages count reset to 0 ${this.users[index].newMessagesCount}`);
+          }
+       });
+      }).catch(error => {
         console.log(`error from reading message thread`)
         console.log(error)
       });
-    }
-
+    }    
 
   }
 
-  async createMessage(message: Message) {
-    if (!this.usersChatHub.has(message.recipientId)) {
-      this.accountService.currentUser$.pipe(take(1)).subscribe(user => this.currentUser = user);
-      this.createHubConnection(this.currentUser, message.recipientId)
-    }
-
-    this.getUsersInChat();
-    await this.delay(100);
-    var exisitngUser = this.users?.find(user => user.userName == message.recipientUserName);
-    if (!exisitngUser) {
-      this.users.push({
-        id: message.recipientId,
-        userName: message.recipientUserName,
-        token: null
-      });
-    }
-    return this.hubConnection.invoke('SendMessage', message).catch(error => console.log(error));
+  async createMessage(message: Message) {    
+    return this.hubConnection.invoke('SendMessage', message).then(()=>this.messages.push(message)).catch(error => console.log(error));
 
   }
 
