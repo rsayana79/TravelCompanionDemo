@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using API.Data;
+using API.DTOs;
 using API.Entites;
 using API.Helpers;
 using API.Interface;
@@ -20,6 +21,7 @@ namespace API.Extensions
             services.AddScoped<IMessageRepository, MessageRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddTransient<IMailService, MailServiceRepository>();
             services.AddSingleton<PresenceTracker>();
             services.AddDbContext<DataContext>(options =>{
                 options.UseSqlServer(config.GetConnectionString("DefaultConnection"));
@@ -27,7 +29,7 @@ namespace API.Extensions
             services.AddDbContext<MargaDharsiContext>(options =>{
                 options.UseSqlServer(config.GetConnectionString("DefaultConnection"));
             });
-
+            services.Configure<MailSettings>(config.GetSection("MailSettings"));
             return services;
         }    
     }

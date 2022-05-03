@@ -9,6 +9,8 @@ namespace API.Interface
     {
         IUserRepository UserRepository { get; }
         IMessageRepository MessageRepository { get; }
+
+        IMailService MailServiceRepository {get;}
         Task<bool> Complete();
         bool HasChanges();
     }
