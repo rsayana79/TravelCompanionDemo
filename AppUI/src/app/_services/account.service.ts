@@ -15,8 +15,9 @@ export class AccountService {
   currentUser$ = this.currentUserSource.asObservable();
   loggedIn : boolean;
   userName :string;
-  newMessagesCount : number;  
-  constructor(private http: HttpClient, private presenceService : PresenceService) { }
+  newMessagesCount : number;
+  registeredUser: User;
+  constructor(private http: HttpClient, private presenceService: PresenceService) { }
 
   login(model:any){
     this.userName = model.loginId;
@@ -24,62 +25,88 @@ export class AccountService {
       map((user:User)=>{
         if(user){
           this.newMessagesCount = user.newMessagesCount;
-          this.setCurrentUser(user);        
-          this.presenceService.createHubConnection(user);  
-          localStorage.setItem('user', JSON.stringify(user));      
+          this.setCurrentUser(user);
+          this.presenceService.createHubConnection(user);
+          localStorage.setItem('user', JSON.stringify(user));
         }
       })
     );
   }
 
   getHeader(){
-    const headers =  new HttpHeaders({
+    const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${this.token}`      
-    });  
+      'Authorization': `Bearer ${this.token}`
+    });
     return headers;
   }
 
-  register(model:any){
+  register(model: any) {
     return this.http.post(this.baseUrl + "/accounts/register", model).pipe(
-      map((user:User)=>{
-        if(user){
-          this.setCurrentUser(user);  
-          this.presenceService.createHubConnection(user);   
-          localStorage.setItem('user', JSON.stringify(user));            
+      map((user: User) => {
+        if (user) {
+          //this.setCurrentUser(user);
+          this.registeredUser = user;
+          console.log(`registered user is ${user}`);
+          /*           this.presenceService.createHubConnection(user);
+                    localStorage.setItem('user', JSON.stringify(user)); */
         }
         return user;
       })
     )
   }
 
-  setCurrentUser(user: User){
+  validatePin(validationPin: string) {
+    //var userToValidate: User;
+    //this.currentUser$.pipe(take(1)).subscribe(user => userToValidate = user);
+    console.log(`code from user is ${this.registeredUser.validationCode} and code entered is ${validationPin}`)
+    if (this.registeredUser.validationCode == validationPin) {
+      console.log(`key matched`)
+      return this.http.post(this.baseUrl + "/accounts/validateemail", this.registeredUser).subscribe(response => {
+        if (response == true) {
+          console.log(`return response from API is ${response}`);
+          return true;
+        }
+        else {
+          console.log(`resturned response from API is ${response}`);
+          return false;
+        }
+      })
+    }
+    else {
+      return false;
+    }
+  }
+
+  setCurrentUser(user: User) {
     this.currentUserSource.next(user);
     this.token = user?.token;
   }
 
-  getcurrentUserId() : number{
+  getcurrentUserId(): number {
     let id;
     this.currentUser$.subscribe(user => {
-        if (user) {
-          id = user.id;}
-      });
-      return id;
+      if (user) {
+        id = user.id;
+      }
+    });
+    return id;
   }
 
-  getcurrentUserName() : string{
+  getcurrentUserName(): string {
     let userName;
     this.currentUser$.subscribe(user => {
-        if (user) {
-          userName = user.userName;}
-      });
-      return userName;
+      if (user) {
+        userName = user.userName;
+      }
+    });
+    return userName;
   }
 
-  logout(){
+  logout() {
     localStorage.removeItem('user');
     this.currentUserSource.next(null);
     this.token = null;
-    this.presenceService.stopHubConnection();
+    this.presenceService?.stopHubConnection();
   }
 }

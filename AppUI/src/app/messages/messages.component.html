@@ -25,8 +25,8 @@
         </div>
     </div>
 </div>
-<div class="mb-3 textarea-container p-2" style="width:50%; margin-left:15%;">
-    <textarea class="form-control text-danger" id="exampleFormControlTextarea1" rows="3"
+<div class="mb-3 textarea-container" style="width:50%; margin-left:15%;">
+    <textarea class="form-control text-danger p-2" id="exampleFormControlTextarea1" rows="3"
         placeholder="Type your message here" [(ngModel)]="newMessage"  (keydown.enter)="createMessageEvent($event)"></textarea>
     <button type="button" class="btn btn-primary" (click)="createMessage()">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send"

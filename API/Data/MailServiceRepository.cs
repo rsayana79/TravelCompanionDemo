@@ -55,17 +55,17 @@ namespace API.Data
 
         public async Task SendWelcomeEmailAsync(User request)
         {
-/*             string FilePath = Directory.GetCurrentDirectory() + "\\Templates\\WelcomeTemplate.html";
+            string FilePath = Directory.GetCurrentDirectory() + "\\EmailTemplate\\WelcomeEmailTemplate.html";
             StreamReader str = new StreamReader(FilePath);
             string MailText = str.ReadToEnd();
             str.Close();
-            MailText = MailText.Replace("[username]", request.UserName).Replace("[email]", request.EmailId); */
             var email = new MimeMessage();
             email.Sender = MailboxAddress.Parse(_mailSettings.Mail);
             email.To.Add(MailboxAddress.Parse(request.EmailId));
             email.Subject = $"Welcome {request.UserName}";
-            var builder = new BodyBuilder();
-            builder.HtmlBody = "Hi " +request.UserName+". Please use the link provided below to activate the email ID "+request.EmailId;
+            var builder = new BodyBuilder();            
+            MailText = MailText.Replace("[username]", request.UserName).Replace("[token]", request.VerificationCode.ToString()).Replace("[emailId]", request.EmailId);
+            builder.HtmlBody = MailText;
             email.Body = builder.ToMessageBody();
             using var smtp = new SmtpClient();
             smtp.Connect(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);

@@ -13,5 +13,7 @@ namespace API.DTOs
         public string Token { get; set; }
 
         public int NewMessagesCount { get; set; }
+
+        public string ValidationCode { get; set; }
     }
 }

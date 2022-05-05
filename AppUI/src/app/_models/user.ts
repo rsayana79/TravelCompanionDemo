@@ -3,4 +3,5 @@ export interface User{
     userName:string;
     id:number;
     newMessagesCount : number;
+    validationCode : string;
 }
