@@ -1,3 +1,4 @@
+import { ServerErrorComponent } from './error/server-error/server-error.component';
 import { AuthGuard } from './_guards/auth.guard';
 import { ErrorComponent } from './error/error.component';
 import { NotificationsComponent } from './notifications/notifications.component';
@@ -9,6 +10,7 @@ import { LoginComponent } from './login/login.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CreatepostingComponent } from './createposting/createposting.component';
+import { NotFoundComponent } from './error/not-found/not-found.component';
 
 const routes: Routes = [
   {path: '', component: LoginComponent},
@@ -25,7 +27,9 @@ const routes: Routes = [
       {path: 'notifications', component: NotificationsComponent}
     ]
   },
-  {path: '**', component: ErrorComponent, pathMatch:'full'}
+  {path: 'not-found', component: NotFoundComponent},
+  {path: 'server-error', component: ServerErrorComponent},
+  {path: '**', component: NotFoundComponent, pathMatch:'full'}
 
 ];
 

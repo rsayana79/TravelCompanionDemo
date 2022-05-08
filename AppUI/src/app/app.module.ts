@@ -1,7 +1,8 @@
+import { ErrorInterceptor } from './_interceptors/error.interceptor';
 
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -29,6 +30,8 @@ import { DatePipe } from '@angular/common';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule} from '@angular/material/sort'
 import { MatPaginatorModule} from '@angular/material/paginator';
+import { NotFoundComponent } from './error/not-found/not-found.component';
+import { ServerErrorComponent } from './error/server-error/server-error.component';
 
 
 @NgModule({
@@ -43,7 +46,9 @@ import { MatPaginatorModule} from '@angular/material/paginator';
     NotificationsComponent,
     ErrorComponent,
     InputfieldsComponent,
-    CreatepostingComponent
+    CreatepostingComponent,
+    NotFoundComponent,
+    ServerErrorComponent
   ],
   imports: [
     BrowserModule,
@@ -63,6 +68,7 @@ import { MatPaginatorModule} from '@angular/material/paginator';
     MatPaginatorModule
   ],
   providers: [
+    {provide : HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi:true},
     MatDatepickerModule,
     DatePipe
   ],
