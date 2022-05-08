@@ -13,7 +13,7 @@ export class AirportService {
   constructor(private http: HttpClient, private accountService: AccountService) { }
 
   getAirports(airportName : string) {
-    this.http.get(this.baseUrl + "/getairports/"+airportName, { headers: this.accountService.getHeader() }).subscribe(
+    this.http.get(this.baseUrl + "/getairports/"+airportName).subscribe(
       response => {
         if (response) {          
           this.airports = [];
@@ -26,7 +26,7 @@ export class AirportService {
   }
 
   getAirport(countryName: string, airportName : string) {
-    this.http.get(this.baseUrl + "/getairport/"+countryName+"/"+airportName, { headers: this.accountService.getHeader() }).subscribe(
+    this.http.get(this.baseUrl + "/getairport/"+countryName+"/"+airportName).subscribe(
       response => {
         if (response && this.airports === undefined) {
           console.log(`country service get countries async ${this.airports}`);

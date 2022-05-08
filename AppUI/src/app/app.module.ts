@@ -1,3 +1,5 @@
+import { LoadingInterceptor } from './_interceptors/loading.interceptor';
+import { JwtInterceptor } from './_interceptors/jwt.interceptor';
 import { ErrorInterceptor } from './_interceptors/error.interceptor';
 
 import { NgModule } from '@angular/core';
@@ -69,6 +71,8 @@ import { ServerErrorComponent } from './error/server-error/server-error.componen
   ],
   providers: [
     {provide : HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi:true},
+    {provide : HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi:true},
+    {provide : HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi:true},
     MatDatepickerModule,
     DatePipe
   ],

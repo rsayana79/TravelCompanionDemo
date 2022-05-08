@@ -16,7 +16,7 @@ export class PostingService {
   constructor(private http: HttpClient, private accountService: AccountService, private toastr: ToastrService) { }
 
   getPostings(travelDate: string) {
-    this.http.get(this.baseUrl + "/postings/getpostings/"+travelDate, { headers: this.accountService.getHeader() }).subscribe(response => {
+    this.http.get(this.baseUrl + "/postings/getpostings/"+travelDate).subscribe(response => {
       if (response) {
         this.postings = [];
         for (var i = 0; i < ((<any>response).length); i++) {

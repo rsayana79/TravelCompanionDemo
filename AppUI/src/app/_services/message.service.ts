@@ -128,7 +128,7 @@ export class MessageService {
 
   getUsersInChat() {
     let currentUser = this.accountService.getcurrentUserId();
-    this.http.get(this.baseUrl + 'getmessagesforuser/' + currentUser, { headers: this.accountService.getHeader() }).subscribe(response => {
+    this.http.get(this.baseUrl + 'getmessagesforuser/' + currentUser).subscribe(response => {
       if (response) {      
         this.users = [];
         for (var i = 0; i < ((<any>response).length); i++) {
@@ -171,7 +171,7 @@ export class MessageService {
   }
 
   createMessagefromPostings(message: Message) {
-    this.http.post(this.baseUrl + 'createMessage', message, { headers: this.accountService.getHeader() }).subscribe(response => {
+    this.http.post(this.baseUrl + 'createMessage', message).subscribe(response => {
       if (response) {
         console.log(response);
       }

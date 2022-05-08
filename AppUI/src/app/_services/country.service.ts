@@ -16,7 +16,7 @@ export class CountryService {
   constructor(private http: HttpClient, private accountService: AccountService) { }
 
   getCountries() {
-    this.http.get(this.baseUrl + "/countries", { headers: this.accountService.getHeader() }).subscribe(response => {
+    this.http.get(this.baseUrl + "/countries").subscribe(response => {
       if (response && this.countries === undefined) {
         this.countries = [];
         for (var i = 0; i < ((<any>response).length); i++) {      
