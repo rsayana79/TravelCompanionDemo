@@ -54,10 +54,11 @@ namespace API.Controllers
             Console.WriteLine(travelDate);
             DateTime parsedTravelDate = DateTime.Parse(travelDate);
             var postings = await _context.Postings.Where(country => country.TravelDate == parsedTravelDate).ToListAsync();
-            List<PostingDTO> postingsDTO = new List<PostingDTO>();            
+            List<PostingDTO> postingsDTO = new List<PostingDTO>();
             foreach (var posting in postings)
             {
                 var postingDTO = new PostingDTO();
+                postingDTO.PostingID = posting.Id;
                 postingDTO.TravelDate = posting.TravelDate;
                 postingDTO.OriginCountry = posting.OriginCountry;
                 postingDTO.OriginAirport = posting.OriginAirport;
@@ -69,6 +70,16 @@ namespace API.Controllers
                 postingsDTO.Add(postingDTO);
             }
             return postingsDTO;
+        }
+
+        [Authorize]
+        [Route("DeletePosting/{postingId?}")]
+        [HttpDelete(Name = "DeletePosting")]
+        public async Task<int> DeletePosting(long postingId)
+        {
+            var posting = await _context.Postings.FindAsync(postingId);
+            _context.Remove(posting);
+            return await _context.SaveChangesAsync();
         }
     }
 }

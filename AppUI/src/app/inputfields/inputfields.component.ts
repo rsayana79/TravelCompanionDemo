@@ -38,6 +38,7 @@ export class InputfieldsComponent implements OnInit {
   destinationAirportSelected : string;
   dateSelected = new Date();
   static postingData : Posting = {
+    postingID : 0,
     travelDate : null,
     originCountry : null,
     originAirport : null,

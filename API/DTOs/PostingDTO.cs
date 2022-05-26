@@ -7,6 +7,7 @@ namespace API.DTOs
 {
     public class PostingDTO
     {
+        public long PostingID { get; set; }
         public DateTime TravelDate { get; set; }
         public string OriginCountry { get; set; }
         public string OriginAirport { get; set; }

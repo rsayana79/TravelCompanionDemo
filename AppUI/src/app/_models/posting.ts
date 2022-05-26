@@ -1,4 +1,5 @@
 export interface Posting{
+    postingID : number;
     travelDate:string;
     originCountry:string;
     originAirport:string;

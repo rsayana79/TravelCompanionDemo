@@ -81,7 +81,9 @@
                         (click)="intializeSender(element.userId, element.userName)" class="btn btn-primary">
                         <fa-icon [icon]="faMessage"></fa-icon>
                     </button>
-                    <button class="btn btn-primary" *ngIf="element.userId == accountService.getcurrentUserId()"><fa-icon [icon]="faTrashCan"></fa-icon>
+                    <button class="btn btn-primary" *ngIf="element.userId == accountService.getcurrentUserId()"
+                        (click)="deletePosting(element.postingID)">
+                        <fa-icon [icon]="faTrashCan"></fa-icon>
                     </button>
 
                 </td>

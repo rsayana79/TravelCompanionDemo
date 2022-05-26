@@ -35,4 +35,16 @@ export class PostingService {
       }
     })
   }
+
+  deletePosting(postingId : number) : number{
+    this.http.delete(this.baseUrl + "/postings/DeletePosting/"+postingId, { headers: this.accountService.getHeader() }).subscribe(response => {
+      if (response) {
+        console.log(response);
+        return response;      
+      }
+    })
+    return 0;
+  }
+
+
 }

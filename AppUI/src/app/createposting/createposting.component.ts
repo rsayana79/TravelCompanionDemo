@@ -21,6 +21,7 @@ export class CreatepostingComponent implements OnInit {
 
   submitPosting(){
     var posting : Posting ={
+      postingID : 0, 
       travelDate : this.datePipe.transform(InputfieldsComponent.postingData.travelDate, "YYYY-MM-dd")+"T00:00:00",
       originCountry : InputfieldsComponent.postingData.originCountry,
       originAirport : InputfieldsComponent.postingData.originAirport,

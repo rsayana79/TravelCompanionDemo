@@ -10,7 +10,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { CountryService } from '../_services/country.service';
 import { Posting } from '../_models/posting';
 import { DatePipe } from '@angular/common';
-import { MatTableDataSource } from '@angular/material/table';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
@@ -50,19 +50,20 @@ export class BookingsDataComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.getpostings(this.datePipe.transform(new Date(), 'yyyy-MM-dd'))
+    this.getpostings(this.datePipe.transform(this.defaultDate, 'yyyy-MM-dd'))
     this.intialize();
     this.accountService.currentUser$.pipe(take(1)).subscribe(user => this.currentUser = user);
   }
 
   async intialize() {
-    await this.delay(100);
     this.postings = this.postingService.postings;
+    await this.delay(100);
     this.initializadateSouce();
   }
 
   @ViewChild(MatSort) sort: MatSort;
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatTable) table : MatTable<Posting>;
 
 
   getpostings(travelDate: string) {
@@ -128,9 +129,35 @@ export class BookingsDataComponent implements OnInit {
 
   getPostingsForSelectedDate(event: MatDatepickerInputEvent<Date>){
     console.log(event.value);
+    this.defaultDate = event.value;
     this.getpostings(this.datePipe.transform(event.value, 'yyyy-MM-dd'))
     this.intialize();
   }
 
+  deletePosting(postingID : number){
+    console.log(`deleted posting is ${postingID}`);
+    this.postingService.deletePosting(postingID);
+    var index = this.getPostingID(postingID);
+    console.log(`index to remove is ${index}`);
+    if(index != -1) {
+      this.postings.splice(index,1);
+      this.toastr.success('Your posting is deleted.');  
+      this.initializadateSouce();
+      this.table.renderRows();         
+    }
+    else this.toastr.warning('Failed to delete the posting')  
+  }
 
+  getPostingID(postingId : number): number{
+    var position = -1;
+    try{
+      this.postings.forEach(function (post, index) {
+        if(postingId === post.postingID) {
+          position = index;
+          throw new Error("Match found");
+        };
+      })
+    }catch(error){}
+    return position;
+  }
 }
