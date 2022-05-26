@@ -1,16 +1,16 @@
-<form *ngIf="((this.accountService.currentUser$ | async) === null) && !this.registerMode" #loginForm="ngForm"
-    autocomplete="0ff">
+<form *ngIf="((this.accountService.currentUser$ | async) === null) && !this.registerMode" [formGroup]='loginForm'
+    (ngSubmit)="loginForm.valid && login()" autocomplete="off">
     <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
 
     <div class="form-floating">
-        <input name="loginId" [(ngModel)]="model.loginId" type="email" class="form-control" id="Input"
-            placeholder="name@example.com">
-        <label for="Input">Email address</label>
-        <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+        <input name="loginId" [formControl]='loginForm.controls["loginId"]' type="email" class="form-control"
+            id="loginId" placeholder="name@example.com">
+        <label for="loginId">Email address</label>
+        <div id="emailHelp" class="form-text">We'll never share your email with anyone</div>
     </div>
     <div class="form-floating">
-        <input name="password" [(ngModel)]="model.password" type="password" class="form-control" id="Password"
-            placeholder="Password">
+        <input name="password" [formControl]='loginForm.controls["password"]' type="password" class="form-control"
+            id="Password" placeholder="Password">
         <label for="Password">Password</label>
         <div id="passwordHelpBlock" class="form-text">
             Please enter a strong password
@@ -22,42 +22,59 @@
             <input type="checkbox" value="remember-me"> Remember me
         </label>
     </div>
+    <div class="row" *ngIf="loginValidationErrors.length > 0">
+        <ul class="text-danger">
+            <li *ngFor="let error of loginValidationErrors">
+                {{error}}
+            </li>
+        </ul>
+    </div>
     <div class="d-flex flex-row justify-content-evenly">
-        <div><button class="w-100 btn btn-lg btn-primary" type="submit" (click)="login()">Sign in</button></div>
+        <div><button [disabled]='!loginForm.valid' class="w-100 btn btn-lg btn-primary" type="submit">Sign in</button>
+        </div>
         <div><button class="w-100 btn btn-lg btn-primary" type="submit" (click)="toggleRegisterMode()">Register</button>
         </div>
     </div>
 </form>
 
 
-<form *ngIf="((this.accountService.currentUser$ | async) === null) && this.registerMode" #registerForm="ngForm" autocomplete="0ff">
+<form *ngIf="((this.accountService.currentUser$ | async) === null) && this.registerMode" [formGroup]='registerForm'
+    (ngSubmit)="registerForm.valid && registerUser()" autocomplete="off">
     <h1 class="h3 mb-3 fw-normal">Please regsiter here</h1>
 
     <div class="form-floating">
-        <input name="userName" [(ngModel)]="model.userName" type="email" class="form-control" id="userName"
-            placeholder="name@example.com">
-        <label for="Input">User Name</label>
+        <input name="userName" [formControl]='registerForm.controls["userName"]' type="email" class="form-control" id="userName"
+            placeholder="Please enter your user name">
+        <label for="UserName">User Name</label>
     </div>
     <br>
     <div class="form-floating">
-        <input name="emailId" [(ngModel)]="model.emailId" type="email" class="form-control" id="emailID"
+        <input name="emailId" [formControl]='registerForm.controls["emailId"]' type="email" class="form-control" id="emailId"
             placeholder="name@example.com">
-        <label for="Input">Email address</label>
-        <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+        <label for="loginId">Email address</label>
+        <div id="emailHelp" class="form-text">We'll never share your email with anyone</div>
     </div>
     <div class="form-floating">
-        <input name="password" [(ngModel)]="model.password" type="password" class="form-control" id="Password"
+        <input name="password" [formControl]='registerForm.controls["password"]' type="password" class="form-control" id="password"
             placeholder="Password">
-        <label for="Password">Password</label>
+        <label for="password">Password</label>
         <div id="passwordHelpBlock" class="form-text">
             Please enter a strong password
         </div>
     </div>
     <br>
+    <div class="row" *ngIf="registerValidationErrors.length > 0">
+        <ul class="text-danger">
+            <li *ngFor="let error of registerValidationErrors">
+                {{error}}
+            </li>
+        </ul>
+    </div>
     <div class="d-flex flex-row justify-content-evenly">
+        <div><button class="w-100 btn btn-lg btn-primary" [disabled]='!registerForm.valid' type="submit">Submit</button></div>
+        <div><button class="w-100 btn btn-lg btn-primary" type="button">Validate with exisiting Pin</button></div>
         <div><button class="w-100 btn btn-lg btn-primary" type="button" (click)="toggleRegisterMode()">Back to
-                Login</button></div>
-        <div><button class="w-100 btn btn-lg btn-primary" type="submit" (click)="registerUser()">Register</button></div>
+                Login</button></div>        
     </div>
 
     <div class="overlay" *ngIf="validationPopUp">

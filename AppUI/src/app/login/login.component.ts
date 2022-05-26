@@ -4,6 +4,7 @@ import { AccountService } from './../_services/account.service';
 import { Component, OnInit } from '@angular/core';
 import { User } from '../_models/user';
 import { ToastrService } from 'ngx-toastr';
+import { FormGroup, Validators, FormControl, FormBuilder } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
@@ -13,28 +14,58 @@ import { ToastrService } from 'ngx-toastr';
 export class LoginComponent implements OnInit {
   model: any = {};
   registerMode = false;
+  registerForm: FormGroup;
+  loginForm: FormGroup;
   validationPopUp = false;
   validationCode: string;
   showWrongCode = false;
-  constructor(public accountService: AccountService, private router: Router, private toastr: ToastrService) { }
+  loginValidationErrors: string[] = [];
+  registerValidationErrors: string[] = [];
+  constructor(public accountService: AccountService, private router: Router, private toastr: ToastrService,
+    private formBuilder: FormBuilder, private registerFormBuilder: FormBuilder) { }
 
   ngOnInit(): void {
+    this.initializeLogin();
   }
 
   login() {
-    console.log(this.model);
-    this.accountService.login(this.model).subscribe(response => {
+    console.log(this.loginForm.value);
+    this.accountService.login(this.loginForm.value).subscribe(response => {
       this.router.navigateByUrl('/viewbookings')
+    }, error => {
+      console.log(`from login error handling`);
+      this.loginValidationErrors = error;
+    })
+  }
+
+
+  initializeLogin() {
+    this.loginForm = this.formBuilder.group({
+      loginId: ['', Validators.required],
+      password: ['', [Validators.required,
+      Validators.minLength(4)]]
+    })
+  }
+
+  initializeRegister() {
+    this.registerForm = this.formBuilder.group({
+      userName: ['', Validators.required],
+      emailId: ['', Validators.required],
+      password: ['', [Validators.required,
+      Validators.minLength(4)]]
     })
   }
 
   toggleRegisterMode() {
     this.registerMode = !this.registerMode;
+    if (this.registerMode) {
+      this.initializeRegister();
+    }
   }
 
   registerUser() {
-    console.log(this.model);
-    this.accountService.register(this.model).subscribe(response => {
+    console.log(this.registerForm.value);
+    this.accountService.register(this.registerForm.value).subscribe(response => {
       console.log(response);
       this.router.navigateByUrl('')
       this.validationPopUp = true;
@@ -42,8 +73,7 @@ export class LoginComponent implements OnInit {
       console.log(`Opened pop up`);
     },
       error => {
-        console.log(error);
-        this.toastr.error(error.error);
+        this.registerValidationErrors = error;
       })
   }
 
@@ -57,11 +87,11 @@ export class LoginComponent implements OnInit {
       this.toastr.success("User registered successfully. Please login");
       this.accountService.logout();
       this.registerMode = false;
-      this.router.navigateByUrl('');      
+      this.router.navigateByUrl('');
     }
-    else{
+    else {
       this.showWrongCode = true;
-    }    
+    }
   }
 
   delay(ms: number) {
