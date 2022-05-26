@@ -21,6 +21,7 @@ import { NotificationsComponent } from './notifications/notifications.component'
 import { ErrorComponent } from './error/error.component';
 import { ToastrModule } from 'ngx-toastr';
 import { SharedModule } from './_modules/shared.module';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { DateAdapter, MatNativeDateModule } from '@angular/material/core';
@@ -67,7 +68,8 @@ import { ServerErrorComponent } from './error/server-error/server-error.componen
     MatAutocompleteModule,
     MatTableModule,
     MatSortModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    FontAwesomeModule
   ],
   providers: [
     {provide : HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi:true},

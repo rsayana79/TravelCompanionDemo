@@ -5,6 +5,7 @@ import { Message } from './../_models/message';
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild, AfterViewChecked, HostListener } from '@angular/core';
 import { User } from '../_models/user';
 import { Router } from '@angular/router';
+import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-messages',
@@ -12,7 +13,7 @@ import { Router } from '@angular/router';
   styleUrls: ['./messages.component.css']
 })
 export class MessagesComponent implements OnInit, OnDestroy, AfterViewChecked {
-
+  faPaperPlane = faPaperPlane;
   messages: Message[];
   users: User[];
   container = 'Unread';
@@ -23,6 +24,7 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewChecked {
   userNameInCurrentChat: string;
   currentUser: User;
   @ViewChild('scrollMe') private myScrollContainer: ElementRef;
+  intiailScrollPosition : number;
   userScrolled: boolean = false;
 
 
@@ -76,7 +78,7 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
 
-  async loadMessageThread(user: User) {
+  loadMessageThread(user: User) {
     if (this.users.length > 0) {
       this.getMessageThread(this.currentUser.id, user.id, user.userName);
     }
@@ -90,7 +92,7 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.userScrolled = false;
   }
 
-  async createMessage() {
+  createMessage() {
     var message: Message = {
       currentUserID: this.accountService.getcurrentUserId(),
       senderId: this.accountService.getcurrentUserId(),
@@ -110,6 +112,8 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewChecked {
   scrollToBottom(): void {
     try {
       this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+      this.intiailScrollPosition = this.myScrollContainer.nativeElement.scrollTop;
+      console.log(`scroll top is ${this.myScrollContainer.nativeElement.scrollTop} and scroll height is ${this.myScrollContainer.nativeElement.scrollHeight}`);
     } catch (err) {
       console.log(err);
     }
@@ -120,7 +124,10 @@ export class MessagesComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.userScrolled = false;
   }
   userscrolled() {
-    this.userScrolled = true;
+    if(this.intiailScrollPosition > this.myScrollContainer.nativeElement.scrollTop){
+      console.log(`user scrolled is true`);
+      this.userScrolled = true;
+    }
   }
 
 

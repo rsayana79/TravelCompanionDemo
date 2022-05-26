@@ -15,6 +15,10 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { Message } from '../_models/message';
+import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import { faMessage } from '@fortawesome/free-solid-svg-icons';
+import { faCircleXmark } from '@fortawesome/free-solid-svg-icons';
+import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 
 
 @Component({
@@ -23,7 +27,10 @@ import { Message } from '../_models/message';
   styleUrls: ['./bookings-data.component.css']
 })
 export class BookingsDataComponent implements OnInit {
-
+  faTrashCan = faTrashCan;
+  faMessage = faMessage;
+  faCircleXmark = faCircleXmark;
+  faPaperPlane = faPaperPlane;
   postings: Posting[];
   defaultDate = new Date();
   displayedColumns: string[] = ['travelDate', 'originCountry', 'originAirport', 'destinationCountry', 'destinationAirport', 'contactSender'];

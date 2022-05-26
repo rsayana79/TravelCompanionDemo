@@ -43,7 +43,7 @@ export class LoginComponent implements OnInit {
     this.loginForm = this.formBuilder.group({
       loginId: ['', Validators.required],
       password: ['', [Validators.required,
-      Validators.minLength(4)]]
+      Validators.minLength(8)]]
     })
   }
 
@@ -52,7 +52,7 @@ export class LoginComponent implements OnInit {
       userName: ['', Validators.required],
       emailId: ['', Validators.required],
       password: ['', [Validators.required,
-      Validators.minLength(4)]]
+      Validators.minLength(8)]]
     })
   }
 
