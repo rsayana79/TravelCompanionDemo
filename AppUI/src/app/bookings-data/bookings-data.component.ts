@@ -41,6 +41,9 @@ export class BookingsDataComponent implements OnInit {
   dateSelected = new Date();
   showMessageWindow = false;
   currentUser : User;
+  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatTable) table : MatTable<Posting>;
 
 
   constructor(private countryService: CountryService, private airportService: AirportService,
@@ -49,32 +52,24 @@ export class BookingsDataComponent implements OnInit {
     private accountService: AccountService, private messageService: MessageService) { }
 
 
+
   ngOnInit(): void {
     this.getpostings(this.datePipe.transform(this.defaultDate, 'yyyy-MM-dd'))
-    this.intialize();
     this.accountService.currentUser$.pipe(take(1)).subscribe(user => this.currentUser = user);
   }
 
-  async intialize() {
-    this.postings = this.postingService.postings;
-    await this.delay(100);
-    this.initializadateSouce();
-  }
-
-  @ViewChild(MatSort) sort: MatSort;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatTable) table : MatTable<Posting>;
-
-
   getpostings(travelDate: string) {
-    this.postingService.getPostings(travelDate);
+    this.postingService.getPostings(travelDate).subscribe(response => {
+      if (response) {
+        this.postings = [];
+        for (var i = 0; i < ((<any>response).length); i++) {
+          this.postings.push(response[i]);
+        }
+      }
+    },
+    error => {console.log(error)},
+    () => {this.initializadateSouce()});    
   }
-
-  delay(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
-  //@ViewChild(MatSort) sort: MatSort;
 
   initializadateSouce() {
     this.dataSource = new MatTableDataSource(this.postings);
@@ -100,7 +95,7 @@ export class BookingsDataComponent implements OnInit {
     this.showMessageWindow = false;
   }
 
-  async contactSender() {
+  contactSender() {
     console.log(`message is ${this.newMessage}`);
     var message: Message = {
       currentUserID : this.accountService.getcurrentUserId(),
@@ -127,11 +122,8 @@ export class BookingsDataComponent implements OnInit {
     }
   }
 
-  getPostingsForSelectedDate(event: MatDatepickerInputEvent<Date>){
-    console.log(event.value);
-    this.defaultDate = event.value;
-    this.getpostings(this.datePipe.transform(event.value, 'yyyy-MM-dd'))
-    this.intialize();
+  getPostingsForSelectedDate(event: MatDatepickerInputEvent<Date>){    
+    this.getpostings(this.datePipe.transform(event.value, 'yyyy-MM-dd'))    
   }
 
   deletePosting(postingID : number){
@@ -141,11 +133,9 @@ export class BookingsDataComponent implements OnInit {
     console.log(`index to remove is ${index}`);
     if(index != -1) {
       this.postings.splice(index,1);
-      this.toastr.success('Your posting is deleted.');  
       this.initializadateSouce();
       this.table.renderRows();         
-    }
-    else this.toastr.warning('Failed to delete the posting')  
+    }    
   }
 
   getPostingID(postingId : number): number{

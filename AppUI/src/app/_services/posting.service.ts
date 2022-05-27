@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
 import { Posting } from './../_models/posting';
 import { Injectable } from '@angular/core';
@@ -15,20 +16,12 @@ export class PostingService {
 
   constructor(private http: HttpClient, private accountService: AccountService, private toastr: ToastrService) { }
 
-  getPostings(travelDate: string) {
-    this.http.get(this.baseUrl + "/postings/getpostings/"+travelDate).subscribe(response => {
-      if (response) {
-        this.postings = [];
-        for (var i = 0; i < ((<any>response).length); i++) {
-          this.postings.push(response[i]);
-        }
-      }
-    })
-    return this.postings;
+  getPostings(travelDate: string): Observable<any> {
+    return this.http.get(this.baseUrl + "/postings/getpostings/"+travelDate);
   }
 
   createPosting(posting : Posting){
-    this.http.post(this.baseUrl + "/postings/addposting", posting, { headers: this.accountService.getHeader() }).subscribe(response => {
+    this.http.post(this.baseUrl + "/postings/addposting", posting).subscribe(response => {
       if (response) {
         console.log(response);
         this.toastr.success('Your posting is added. Please navigate to the Exisiting posts tab')
@@ -36,14 +29,14 @@ export class PostingService {
     })
   }
 
-  deletePosting(postingId : number) : number{
-    this.http.delete(this.baseUrl + "/postings/DeletePosting/"+postingId, { headers: this.accountService.getHeader() }).subscribe(response => {
+  deletePosting(postingId : number){
+    this.http.delete(this.baseUrl + "/postings/DeletePosting/"+postingId).subscribe(response => {
       if (response) {
         console.log(response);
         return response;      
       }
-    })
-    return 0;
+    },error => {this.toastr.error('Something went wrong. Posting not deleted')},
+    ()=>{this.toastr.success('Posting deleted successfully')})    
   }
 
 
