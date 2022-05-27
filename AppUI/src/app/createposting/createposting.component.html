@@ -7,6 +7,6 @@
     </label>
   </div>
   <div class=" form-check p-2">
-    <button type="submit" (click)="this.submitPosting()" class="btn btn-primary">Submit</button>
+    <button type="submit" [disabled]='!validData()' (click)="this.submitPosting()" class="btn btn-primary">Submit</button>
   </div>
 </div>

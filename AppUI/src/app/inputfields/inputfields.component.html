@@ -1,10 +1,10 @@
 <div class="p-2">
     <mat-form-field>
         <mat-label>Travel Date</mat-label>
-        <input matInput [matDatepicker]="picker" [min]="dateSelected" [(value)]="dateSelected">
-        <mat-hint>MM/DD/YYYY</mat-hint>
+        <input matInput [matDatepicker]="picker" [min]="dateSelected" [(value)]="dateSelected" disabled="">
+        <mat-hint>Please choose date from calendar</mat-hint>
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-datepicker #picker></mat-datepicker>
+        <mat-datepicker #picker disabled="false"></mat-datepicker>
     </mat-form-field>
 </div>
 <div class="p-2">
@@ -14,7 +14,7 @@
             <input type="text" placeholder="Start typing to filter" aria-label="Select Country" matInput
                 [formControl]="originCountryFormControl" [matAutocomplete]="originCountry">
             <mat-autocomplete #originCountry="matAutocomplete">
-                <mat-option (click)="loadAirports(originCountry, 'originAirport')"
+                <mat-option (click)="this.getAirports(originCountry, 'originAirport')"
                     *ngFor="let originCountry of originCountryFilter | async" [value]="originCountry">
                     {{originCountry}}
                 </mat-option>
@@ -29,9 +29,9 @@
             <input type="text" placeholder="Start typing to filter" aria-label="Select Airport" matInput
                 [formControl]="originAirportFormControl" [matAutocomplete]="originAirport">
             <mat-autocomplete #originAirport="matAutocomplete">
-                <mat-option (click)="setairport(option, 'origin')"
-                *ngFor="let option of originAirportFilter | async" [value]="option">
-                    {{option}}
+                <mat-option (click)="this.setairport(originAirport, 'origin')"
+                *ngFor="let originAirport of originAirportFilter | async" [value]="originAirport">
+                    {{originAirport}}
                 </mat-option>
             </mat-autocomplete>
         </mat-form-field>
@@ -44,7 +44,7 @@
             <input type="text" placeholder="Start typing to filter" aria-label="Select Country" matInput
                 [formControl]="destinationCountryFormControl" [matAutocomplete]="destinationCountry">
             <mat-autocomplete #destinationCountry="matAutocomplete">
-                <mat-option (click)="loadAirports(destinationCountry, 'destinationAirport')"
+                <mat-option (click)="this.getAirports(destinationCountry, 'destinationAirport')"
                     *ngFor="let destinationCountry of destinationCountryFilter | async" [value]="destinationCountry">
                     {{destinationCountry}}
                 </mat-option>
@@ -59,7 +59,7 @@
             <input type="text" placeholder="Start typing to filter" aria-label="Select Airport" matInput
                 [formControl]="destinationAirportFormControl" [matAutocomplete]="destinationAirport">
             <mat-autocomplete #destinationAirport="matAutocomplete">
-                <mat-option (click)="setairport(option, 'destination')"
+                <mat-option (click)="this.setairport(option, 'destination')"
                 *ngFor="let option of destinationAirportFilter | async" [value]="option">
                     {{option}}
                 </mat-option>

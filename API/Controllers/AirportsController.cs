@@ -25,7 +25,7 @@ namespace API.Controllers
         [HttpGet(Name = "GetAirports")]
         public async Task<ActionResult<IEnumerable<AirportsList>>> GetAirports(string country)
         {
-            return await _context.AirportsLists.Where(airport => airport.Country.StartsWith(country)).ToListAsync();
+            return await _context.AirportsLists.Where(airport => airport.Country.Equals(country)).ToListAsync();
              
         }
 

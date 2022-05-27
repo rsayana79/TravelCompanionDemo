@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Country } from '../_models/country';
 import { AccountService } from './account.service';
@@ -10,21 +11,12 @@ import { AccountService } from './account.service';
 export class CountryService {
 
   baseUrl = "https://localhost:5001/api";
-  countries: Country[];
 
 
   constructor(private http: HttpClient, private accountService: AccountService) { }
 
-  getCountries() {
-    this.http.get(this.baseUrl + "/countries").subscribe(response => {
-      if (response && this.countries === undefined) {
-        this.countries = [];
-        for (var i = 0; i < ((<any>response).length); i++) {      
-          this.countries.push(response[i]);
-        }
-      }
-    })
-    return this.countries;
+  getCountries() : Observable<any> {
+    return this.http.get(this.baseUrl + "/countries");  
   }
 
 }

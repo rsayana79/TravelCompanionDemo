@@ -53,7 +53,7 @@ namespace API.Controllers
         {
             Console.WriteLine(travelDate);
             DateTime parsedTravelDate = DateTime.Parse(travelDate);
-            var postings = await _context.Postings.Where(country => country.TravelDate == parsedTravelDate).ToListAsync();
+            var postings = await _context.Postings.Where(country => country.TravelDate == parsedTravelDate).OrderByDescending(p => p.Id).ToListAsync();
             List<PostingDTO> postingsDTO = new List<PostingDTO>();
             foreach (var posting in postings)
             {
