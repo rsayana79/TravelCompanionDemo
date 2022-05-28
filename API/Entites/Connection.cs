@@ -15,9 +15,12 @@ namespace API.Entites
         {
             ConnectionId = connectionId;
             Username = username;
+            connectionTime = DateTime.Now;
         }
 
         public string ConnectionId { get; set; }
         public string Username { get; set; }
+
+        public DateTime connectionTime { get; set; }
     }
 }

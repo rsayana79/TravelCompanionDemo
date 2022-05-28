@@ -39,7 +39,6 @@ namespace API.SignalR
             var otherUserID = int.Parse(httpContext.Request.Query["user"].ToString());
             var user = await _unitOfWork.UserRepository.GetUserByIdAsync(otherUserID);
             var currentUser = await _unitOfWork.UserRepository.GetUserByIdAsync(currentUserID);
-            await GetUsersWithMessages(currentUser);
             var groupName = GetGroupName(Context.User.GetUsername(), user.UserName);
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
             var group = await AddToGroup(groupName);
@@ -77,33 +76,14 @@ namespace API.SignalR
 
             var groupName = GetGroupName(sender.UserName, recipient.UserName);
 
-            var group = await _unitOfWork.MessageRepository.GetMessageGroup(groupName);
-            /* 
-                        if (group !=null && group.Connections.Any(x => x.Username == recipient.UserName))
-                        {
-                            message.DateRead = DateTime.UtcNow;
-                        } */
-            if (!(group != null && group.Connections.Any(x => x.Username == recipient.UserName)))
-            {
-                var connections = await _tracker.GetConnectionsForUser(recipient.UserName);
-                if (connections != null)
-                {
-                    await _presenceHub.Clients.Clients(connections).SendAsync("NewMessageReceived",
-                        new { username = sender.UserName });
-                }
-            }
-
-
-            /*             if(createMessageDto.CurrentUserID == sender.Id){
-                            await GetUsersWithMessages(recipient);            
-                        }
-                        else if(createMessageDto.CurrentUserID == recipient.Id){
-                            await GetUsersWithMessages(sender);
-                        } */
+            var connection = await _unitOfWork.MessageRepository.GetLatestConnection(recipient.UserName);
 
             if (await _unitOfWork.MessageRepository.AddMessage(message))
             {
-                await Clients.Group(groupName).SendAsync("NewMessage", _mapper.Map<MessageDTO>(message));
+                if (connection != null)
+                {
+                    await Clients.Client(connection.ConnectionId).SendAsync("NewMessage", _mapper.Map<MessageDTO>(message));
+                }
             }
         }
 
@@ -161,10 +141,5 @@ namespace API.SignalR
 
         }
 
-/*         public async Task<UserDTO> MessageFromNewUser(User user)
-        {
-            await Clients.Caller.SendAsync("MessageFromNewUser", user);
-            return _mapper.Map<UserDTO>(user);
-        } */
     }
 }

@@ -15,7 +15,8 @@
           <a class="nav-link" routerLink="/createposting" routerLinkActive="active">Post your travel plan</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link bs-white" routerLink="/messages" routerLinkActive="active">Messages
+          <a class="nav-link bs-white" [ngClass]="{'alert-warning': this.accountService.newMessagesCount > 0, 'text-dark': this.accountService.newMessagesCount > 0}"
+          routerLink="/messages" routerLinkActive="active">Messages
             <span *ngIf="this.accountService.newMessagesCount > 0" class="badge bg-secondary">{{this.accountService.newMessagesCount}}</span>
           </a>
         </li>

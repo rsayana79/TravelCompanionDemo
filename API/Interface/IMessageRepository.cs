@@ -27,5 +27,9 @@ namespace API.Interface
         Task<int> NewMessageCountBetweenUsers(int currentUserId, int senderId);
 
         Task<int> TotalNewMessagesForUser(int currentUserId);
+
+        bool IsANewChat(int senderId, int recipientId);
+
+        Task<Connection> GetLatestConnection(string username);
     }
 }

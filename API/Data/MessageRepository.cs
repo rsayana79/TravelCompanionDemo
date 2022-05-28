@@ -121,6 +121,9 @@ namespace API.Data
             return await _context.SaveChangesAsync() > 0;
         }
 
+        public async Task<Connection> GetLatestConnection(string username){
+            return await _context.Connections.Where(c => c.Username == username).OrderByDescending(c => c.connectionTime).FirstOrDefaultAsync();
+        }
         public async Task<Group> GetMessageGroup(string groupName)
         {
             return await _context.Groups
@@ -158,5 +161,12 @@ namespace API.Data
             var messages =await _context.Messages.Where(message => message.DateRead == null && message.RecipientId == currentUserId).ToListAsync();        
             return messages.Count;
         }
+
+        public bool IsANewChat(int senderId, int recipientId){
+            var messages = _context.Messages.Where(m => (m.SenderId == senderId && m.RecipientId == recipientId) || (m.SenderId == recipientId && m.RecipientId == senderId));
+            int Count = messages.CountAsync().GetAwaiter().GetResult();
+            if(Count > 0) return false;
+            return true;
+        } 
     }
 }

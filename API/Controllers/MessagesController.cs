@@ -57,12 +57,22 @@ namespace API.Controllers
                 Content = createMessageDto.Content
             };
 
-
-
-            bool messageAddedSuccessfully = await _messageRepository.AddMessage(message);
-            var newUser =  _mapper.Map<UserDTO>(sender);
-            newUser.NewMessagesCount = await _messageRepository.NewMessageCountBetweenUsers(message.RecipientId, sender.Id);            
-            await _messageHub.Clients.User(message.RecipientId.ToString()).SendAsync("MessageFromNewUser", newUser);
+            bool isNewChat = _messageRepository.IsANewChat(sender.Id, recipient.Id);
+            bool messageAddedSuccessfully = _messageRepository.AddMessage(message).GetAwaiter().GetResult();
+            var connection = _messageRepository.GetLatestConnection(recipient.UserName).GetAwaiter().GetResult();;
+            if (messageAddedSuccessfully && connection != null)
+            {
+                if (isNewChat)
+                {
+                    var newUser = _mapper.Map<UserDTO>(sender);
+                    newUser.NewMessagesCount = 1;
+                    await _messageHub.Clients.Client(connection.ConnectionId).SendAsync("FromNewUser", newUser);
+                }
+                else
+                {
+                    await _messageHub.Clients.Client(connection.ConnectionId).SendAsync("NewMessage", _mapper.Map<MessageDTO>(message));
+                }
+            }
             if (messageAddedSuccessfully) return Ok(_mapper.Map<MessageDTO>(message));
 
             return BadRequest("Failed to send message");
@@ -73,7 +83,7 @@ namespace API.Controllers
         [HttpGet("GetMessagesForUser/{id}")]
         public async Task<IEnumerable<UserDTO>> GetUsersWithMessages(int id)
         {
-            User user = await _context.Users.SingleOrDefaultAsync(user => user.Id == id);            
+            User user = await _context.Users.SingleOrDefaultAsync(user => user.Id == id);
 
             var usersWithMessages = await _messageRepository.GetUsersWithMessages(id);
 
@@ -83,7 +93,7 @@ namespace API.Controllers
 
         [HttpGet("messagethread/{currentuserId}/{receipientUserId}")]
         public async Task<ActionResult<IEnumerable<MessageDTO>>> GetMessageThread(int currentuserId, int receipientUserId)
-        {        
+        {
             return Ok(await _messageRepository.GetMessageThread(currentuserId, receipientUserId));
         }
     }
