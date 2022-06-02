@@ -63,8 +63,10 @@ namespace API.Data
             email.Sender = MailboxAddress.Parse(_mailSettings.Mail);
             email.To.Add(MailboxAddress.Parse(request.EmailId));
             email.Subject = $"Welcome {request.UserName}";
-            var builder = new BodyBuilder();            
-            MailText = MailText.Replace("[username]", request.UserName).Replace("[token]", request.VerificationCode.ToString()).Replace("[emailId]", request.EmailId);
+            var builder = new BodyBuilder();   
+            string url = "https://localhost:4200/activateaccount/"+request.EmailId+"/"+request.VerificationCode;        
+            string activationLink = $"<a href={url}>Activate Account</a>";  
+            MailText = MailText.Replace("[username]", request.UserName).Replace("[activateAccount]", activationLink);
             builder.HtmlBody = MailText;
             email.Body = builder.ToMessageBody();
             using var smtp = new SmtpClient();

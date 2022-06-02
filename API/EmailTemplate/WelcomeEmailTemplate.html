@@ -6,18 +6,96 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        tr {
+            margin-top: 1em;
+            margin-bottom: 1em;
+        }
 
+        .button {
+            display: block;
+            width: 10em;
+            height: 2em;
+            background: #eb6864;
+            padding: 1%;
+            text-align: center;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+            line-height: 2em;
+            cursor: pointer;
+        }
+
+        .button a {
+            text-decoration: none;
+            color: white;
+        }
+    </style>
 </head>
 
-<body style="display:flex; width: 100%;">
-    <div
-        style="display:flex; flex-direction:row; width: 50%; margin-left: 15%; margin-top: 3%; background-color: aliceblue;">
-        <div>Hello [username], your email has been registered with Travel
-            Companion Website</div>
-        <div>Please enter the below validation code on the website to activate your account</div>
-        <div>
-            [token]
-        </div>
-    </div>
+<body style="display:flex; flex-direction: column; width: 100%;">
+    <table>
+        <tr style="display:flex; flex-direction:column; align-items:left; width: 50%; 
+        margin-left: 15%; margin-top: 3%; background-color: aliceblue;
+        padding: 2em;">
+            <td>
+                <table>
+                    <tr>
+                        <td>
+                            <h1 style="align-self: center;">Welcome to Travel Companion!</h1>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><br><br></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div>Hello [username], We're excited to have you get started. First, you need to confirm
+                                your account.</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><br></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div>Please activate your account by clicking the button below</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><br></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="button">
+                                [activateAccount]
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><br></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div style="margin-bottom: 0.5em;">Regards,</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div style="margin-top: 0em;">Travel Companion.</div>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr style="border-top: 8px solid #bbb; border-radius: 5px; display:flex; flex-direction:column; align-items:left; width: 50%; 
+        margin-left: 15%; margin-top: 3%; padding: 2em;">
+            <td>
+                You received this email because you just signed up for a new account. Please respond to this email if
+                you did
+                not authorize this request.
+            </td>
+        </tr>
+    </table>
 </body>
 </html>

@@ -1,34 +1,39 @@
-<div *ngIf="messageService.users?.length == 0">No messages to show</div>
-<div class="d-flex flex-row align-items-start" style="max-height: 30em;">
-    <div class="d-flex flex-column p-2" style="width:15%">
-        <button *ngFor="let user of (messageService.users)" (click)="loadMessageThread(user)"
-        [ngClass]="{'btn-info': (this.userNameInCurrentChat == user.userName),
-        'btn-outline-info': (this.userNameInCurrentChat != user.userName && user.newMessagesCount == 0),
-        'btn-success': (user.newMessagesCount > 0)}"              
-        class="p-2 btn" style="width: 100%; margin-bottom:5%; display: block;">
-            <span style="float:left">{{user.userName}}</span> 
-            <span *ngIf="user.newMessagesCount > 0" class="badge bg-secondary" style="float:right">{{user.newMessagesCount}}</span>
-        </button>
-    </div>
-    <div class="d-flex flex-column justify-content-evenly p-2" style="width:50%;">
-        <div class="d-flex flex-row card bg-info text-white p-2" style="min-height:3em; max-height:3em; margin-bottom: 0.5em;">
-            <h4>Chatting with - {{this.userNameInCurrentChat}}</h4>
+<div *ngIf="this.messageService.users?.length == 0" class="d-flex flex-row justify-content-center">No messages to display</div>
+<div *ngIf="this.messageService.users?.length != 0  ">
+    <div class="d-flex flex-row align-items-start" style="max-height: 30em;">
+        <div class="d-flex flex-column p-2" style="width:15%">
+            <button *ngFor="let user of (this.messageService.users)" (click)="this.loadMessageThread(user)" [ngClass]="{'btn-info': (this.messageService.userNameInCurrentChat == user.userName),
+        'btn-outline-info': (this.messageService.userNameInCurrentChat != user.userName && user.newMessagesCount == 0),
+        'btn-success': (user.newMessagesCount > 0)}" class="p-2 btn"
+                style="width: 100%; margin-bottom:5%; display: block;">
+                <span style="float:left">{{user.userName}}</span>
+                <span *ngIf="user.newMessagesCount> 0" class="badge bg-secondary"
+                    style="float:right">{{user.newMessagesCount}}</span>
+            </button>
         </div>
-        <div #scrollMe class="d-flex card overflow-auto border-primary p-2 flex-column column-reverse" 
-            style="min-height:20em; max-height:20em;" (scroll)="userscrolled()">
-            <div class="text-success" *ngFor="let message of (messageService.messages)" style="width: 100%;">
-                <p
-                    [ngClass]="{'d-flex flex-row-reverse text-danger': message.senderId == this.accountService.getcurrentUserId()}">
-                    {{message.content}}</p>
-
+        <div class="d-flex flex-column justify-content-evenly p-2" style="width:50%;">
+            <div class="d-flex flex-row card bg-info text-white p-2"
+                style="min-height:3em; max-height:3em; margin-bottom: 0.5em;">
+                <h4>Chatting with - {{this.messageService.userNameInCurrentChat}}</h4>
+            </div>
+            <div #scrollMe class="d-flex card overflow-auto border-primary p-2 flex-column column-reverse"
+                style="min-height:20em; max-height:20em;" (scroll)="userscrolled()">
+                <div class="text-success" *ngFor="let message of (this.messageService.messages)" style="width: 100%;">
+                    <p style="max-width: 75%;" class="alert alert-dismissible"
+                        [ngClass]="{'alert-info': message.senderId == this.accountService.getcurrentUserId(), 'alert-warning':false}"
+                        [ngClass]="{'alert-warning': message.senderId != this.accountService.getcurrentUserId(), 'alert-info':true}"
+                        [ngStyle]="{'float': (message.senderId == this.accountService.getcurrentUserId()) ? 'right' : 'left'}">
+                        {{message.content}}
+                    </p>
+                </div>
             </div>
         </div>
     </div>
-</div>
-<div class="d-flex flex-column p-2 textarea-container" style="width:50%; margin-left:15%;">
-    <textarea class="form-control text-danger p-2" id="exampleFormControlTextarea1" rows="3"
-        placeholder="Type your message here" [(ngModel)]="newMessage"  (keydown.enter)="createMessageEvent($event)"></textarea>
-    <button type="button" class="btn btn-primary" (click)="createMessage()">
-        <fa-icon [icon]="faPaperPlane"></fa-icon>
-    </button>
+    <div class="d-flex flex-column p-2 textarea-container" style="width:50%; margin-left:15%;">
+        <textarea class="form-control text-danger p-2" id="exampleFormControlTextarea1" rows="3"
+            placeholder="Type your message here" [(ngModel)]="newMessage"></textarea>
+        <button type="button" class="btn btn-primary" (click)="createMessage()" [disabled]="this.newMessage == null">
+            <fa-icon [icon]="faPaperPlane"></fa-icon>
+        </button>
+    </div>
 </div>

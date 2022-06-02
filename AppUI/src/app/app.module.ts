@@ -1,8 +1,9 @@
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { LoadingInterceptor } from './_interceptors/loading.interceptor';
 import { JwtInterceptor } from './_interceptors/jwt.interceptor';
 import { ErrorInterceptor } from './_interceptors/error.interceptor';
 
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -35,6 +36,7 @@ import { MatSortModule} from '@angular/material/sort'
 import { MatPaginatorModule} from '@angular/material/paginator';
 import { NotFoundComponent } from './error/not-found/not-found.component';
 import { ServerErrorComponent } from './error/server-error/server-error.component';
+import { ValidateaccountComponent } from './validateaccount/validateaccount.component';
 
 
 @NgModule({
@@ -51,7 +53,8 @@ import { ServerErrorComponent } from './error/server-error/server-error.componen
     InputfieldsComponent,
     CreatepostingComponent,
     NotFoundComponent,
-    ServerErrorComponent
+    ServerErrorComponent,
+    ValidateaccountComponent
   ],
   imports: [
     BrowserModule,
@@ -69,8 +72,10 @@ import { ServerErrorComponent } from './error/server-error/server-error.componen
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
-    FontAwesomeModule
+    FontAwesomeModule,
+    NgxSpinnerModule
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [
     {provide : HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi:true},
     {provide : HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi:true},

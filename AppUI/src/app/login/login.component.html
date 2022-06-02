@@ -1,5 +1,6 @@
 <form *ngIf="((this.accountService.currentUser$ | async) === null) && !this.registerMode" [formGroup]='loginForm'
-    (ngSubmit)="loginForm.valid && login()" autocomplete="off">
+    (ngSubmit)="loginForm.valid && login()" autocomplete="off"
+    class="d-flex flex-column" style="width:30%; margin-left: 35%;">
     <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
 
     <div class="form-floating">
@@ -12,16 +13,8 @@
         <input name="password" [formControl]='loginForm.controls["password"]' type="password" class="form-control"
             id="Password" placeholder="Password">
         <label for="Password">Password</label>
-        <div id="passwordHelpBlock" class="form-text">
-            Please enter a strong password
-        </div>
     </div>
 
-    <div class="checkbox mb-3">
-        <label>
-            <input type="checkbox" value="remember-me"> Remember me
-        </label>
-    </div>
     <div class="row" *ngIf="loginValidationErrors.length > 0">
         <ul class="text-danger">
             <li *ngFor="let error of loginValidationErrors">
@@ -35,11 +28,18 @@
         <div><button class="w-100 btn btn-lg btn-primary" type="submit" (click)="toggleRegisterMode()">Register</button>
         </div>
     </div>
+    <div class="overlay" *ngIf="validationPopUp">
+        <div class="popup">
+            <h4>Please activate your account using the link shared in the email</h4>
+            <a class="close" (click)="validationPopUp = false">&times;</a>            
+        </div>
+    </div>
 </form>
 
 
 <form *ngIf="((this.accountService.currentUser$ | async) === null) && this.registerMode" [formGroup]='registerForm'
-    (ngSubmit)="registerForm.valid && registerUser()" autocomplete="off">
+    (ngSubmit)="registerForm.valid && registerUser()" autocomplete="off"
+    class="d-flex flex-column" style="width:30%; margin-left: 35%;">
     <h1 class="h3 mb-3 fw-normal">Please regsiter here</h1>
 
     <div class="form-floating">
@@ -59,7 +59,7 @@
             placeholder="Password">
         <label for="password">Password</label>
         <div id="passwordHelpBlock" class="form-text">
-            Please enter a strong password
+            Please enter a password of minimum 8 characters in length
         </div>
     </div>
     <br>
@@ -71,26 +71,8 @@
         </ul>
     </div>
     <div class="d-flex flex-row justify-content-evenly">
-        <div><button class="w-100 btn btn-lg btn-primary" [disabled]='!registerForm.valid' type="submit">Submit</button></div>
-        <div><button class="w-100 btn btn-lg btn-primary" type="button">Validate with exisiting Pin</button></div>
+        <div><button class="w-100 btn btn-lg btn-primary" [disabled]='!registerForm.valid' type="submit">Register</button></div>        
         <div><button class="w-100 btn btn-lg btn-primary" type="button" (click)="toggleRegisterMode()">Back to
                 Login</button></div>        
-    </div>
-
-    <div class="overlay" *ngIf="validationPopUp">
-        <div class="popup">
-            <h4>Please enter the code send to the email</h4>
-            <a class="close" (click)="validationPopUp = false">&times;</a>
-            <div *ngIf="showWrongCode">Invalid code entered. Please try again</div>
-            <div class="d-flex flex-row justify-content-evenly">
-                <div class="col-md-4">
-                    <input type="number" name="zipcode" class="form-control" maxlength="6" placeholder="000000"
-                        [(ngModel)]="validationCode"
-                        oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);">
-                </div>
-                <div class="col-md-4"><button class="btn btn-primary" type="submit"
-                        (click)="validatePin()">Submit</button></div>
-            </div>
-        </div>
     </div>
 </form>

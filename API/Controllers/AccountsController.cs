@@ -54,12 +54,11 @@ namespace API.Controllers
                 EmailValidated = false,
                 VerificationCode = validationPin
             };
-            await _unitOfWork.MailServiceRepository.SendWelcomeEmailAsync(user);            
+            await _unitOfWork.MailServiceRepository.SendWelcomeEmailAsync(user);
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
             return new UserDTO
             {
-                Id = user.Id,
                 UserName = user.UserName,
                 Token = null,
                 NewMessagesCount = 0,
@@ -69,11 +68,22 @@ namespace API.Controllers
         }
 
         [AllowAnonymous]
-        [HttpPost("ValidateEmail")]
-        public async Task<bool> validateEmail(User user)
+        [HttpPost("ValidateEmail/{emailId}/{code}")]
+        public async Task<ActionResult<bool>> validateEmail(string emailId, string code)
         {
-            var userValidated = await _context.Users.FindAsync(user.Id);
-            userValidated.EmailValidated = true;
+            try
+            {
+                var newUser = await _context.Users.Where(u => u.EmailId == emailId).FirstAsync();
+                if (newUser.VerificationCode == code)
+                {
+                    newUser.EmailValidated = true;
+                }
+                else
+                {
+                    return BadRequest("Verification code mismatch");
+                }
+            }
+            catch (Exception) { return BadRequest("Could not find the user"); }
             await _context.SaveChangesAsync();
             return true;
         }
@@ -95,7 +105,7 @@ namespace API.Controllers
         {
             var user = await _context.Users.SingleOrDefaultAsync(user => (user.UserName == loginDTO.LoginId) || (user.EmailId == loginDTO.LoginId));
             if (user == null) return BadRequest("Incorrect user name entered");
-            if(!user.EmailValidated) return BadRequest("Email ID is not validated. Please validate the email with the code");
+            if (!user.EmailValidated) return BadRequest("Email ID is not validated. Please validate the account using the link shared in the email");
             using var hmac = new HMACSHA512(user.PasswordSalt);
             var computerHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDTO.password));
             for (int i = 0; i < computerHash.Length; i++)

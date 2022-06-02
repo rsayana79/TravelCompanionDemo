@@ -3,7 +3,7 @@ import { User } from './../_models/user';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {map} from 'rxjs/operators';
-import { ReplaySubject } from 'rxjs';
+import { ReplaySubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -56,26 +56,8 @@ export class AccountService {
     )
   }
 
-  validatePin(validationPin: string) {
-    //var userToValidate: User;
-    //this.currentUser$.pipe(take(1)).subscribe(user => userToValidate = user);
-    console.log(`code from user is ${this.registeredUser.validationCode} and code entered is ${validationPin}`)
-    if (this.registeredUser.validationCode == validationPin) {
-      console.log(`key matched`)
-      return this.http.post(this.baseUrl + "/accounts/validateemail", this.registeredUser).subscribe(response => {
-        if (response == true) {
-          console.log(`return response from API is ${response}`);
-          return true;
-        }
-        else {
-          console.log(`resturned response from API is ${response}`);
-          return false;
-        }
-      })
-    }
-    else {
-      return false;
-    }
+  validatePin(emailId: string, validationPin: string) : Observable<any>{    
+    return this.http.post(this.baseUrl + "/accounts/validateemail/"+emailId+"/"+validationPin, null)
   }
 
   setCurrentUser(user: User) {

@@ -16,9 +16,7 @@ export class LoginComponent implements OnInit {
   registerMode = false;
   registerForm: FormGroup;
   loginForm: FormGroup;
-  validationPopUp = false;
-  validationCode: string;
-  showWrongCode = false;
+  validationPopUp = false;   
   loginValidationErrors: string[] = [];
   registerValidationErrors: string[] = [];
   constructor(public accountService: AccountService, private router: Router, private toastr: ToastrService,
@@ -67,35 +65,17 @@ export class LoginComponent implements OnInit {
     console.log(this.registerForm.value);
     this.accountService.register(this.registerForm.value).subscribe(response => {
       console.log(response);
-      this.router.navigateByUrl('')
-      this.validationPopUp = true;
-      this.registerMode = true;
-      console.log(`Opened pop up`);
     },
       error => {
         this.registerValidationErrors = error;
+        this.toastr.error("Registration failed. Please try again")
+      },
+      ()=>{
+        this.router.navigateByUrl('');
+        this.registerMode = false;
+        this.validationPopUp = true;
       })
   }
 
-  async validatePin() {
-    console.log(`entered validation code is ${this.validationCode}`);
-    var uservalidated = this.accountService.validatePin(this.validationCode);
-    await this.delay(1000);
-    console.log(`user validation result is ${uservalidated}`)
-    if (uservalidated) {
-      this.validationPopUp = false;
-      this.toastr.success("User registered successfully. Please login");
-      this.accountService.logout();
-      this.registerMode = false;
-      this.router.navigateByUrl('');
-    }
-    else {
-      this.showWrongCode = true;
-    }
-  }
-
-  delay(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
 
 }
